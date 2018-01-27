@@ -94,21 +94,14 @@ function create() {
     player.body.collideWorldBounds = true;
 	player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
-<<<<<<< HEAD
     this.jumping = false;
     game.camera.follow(player);
-=======
 
     ennemygroup.enableBody=true;
     ennemygroup.physicsBodyType= Phaser.Physics.ARCADE;
 
     this.jumping = false;
     game.camera.follow(player);
-
-    cursors = game.input.keyboard.createCursorKeys();
->>>>>>> 8375681313257f843636408ec5498f77f7d1e4ea
-
-
 
     cursors = game.input.keyboard.createCursorKeys();
 }
@@ -164,7 +157,6 @@ function createMap(){
     }
 }
 
-<<<<<<< HEAD
 function giveSuperForce(){
     MIGHT = 1;
 }
@@ -184,7 +176,8 @@ function giveDoubleJump(){
 
 function giveSize(){
     SIZE = 1;
-=======
+}
+
 function createFoe(x,y){
 
     ennemy=ennemygroup.create(x*64,y*64,'ennemy');
@@ -193,6 +186,4 @@ function createFoe(x,y){
 
 function loseLife(){
     life--;
-
->>>>>>> 8375681313257f843636408ec5498f77f7d1e4ea
 }
