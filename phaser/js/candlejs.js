@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update, render: render});
+var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update});
 
 
 function preload() {
@@ -12,12 +12,17 @@ function preload() {
     game.load.image('bougie', 'assets/bougie.png');
     game.load.image('bullet', 'assets/flamme.png');
     game.load.image('background', 'assets/background.png');
-    game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
-    game.load.image('caissesprite', 'assets/star.png');
+    game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
+    game.load.image('cratesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamond.png');
-
-    game.load.image('candleguy', 'assets/candleguy.png');
-    game.load.spritesheet('npc', 'assets/npc.png', 32, 64);
+    game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
+    game.load.spritesheet('life', 'assets/life.png', 58, 53);
+    game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
+    game.load.spritesheet('npcArmor', 'assets/npcArmor.png', 32, 64);
+    game.load.spritesheet('npcFlame', 'assets/npcFlame.png', 32, 64);
+    game.load.spritesheet('npcDoubleJump', 'assets/npcDoubleJump.png', 32, 64);
+    game.load.spritesheet('npcSize', 'assets/npcSize.png', 32, 64);
+    game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
 
 }
@@ -31,7 +36,7 @@ Code de la map
 4: ennemi
 5: flamme
 6: rebondissante
-7: caisse
+7: crate
 8: plateforme destructible double saut
 9: trou de petit
 t: trappe
@@ -44,34 +49,34 @@ d: plateforme doublesaut
 var map = [
 '                                                    2 r',
 '                                           qggggggggggr',
-' qx                                        9999       r',
-'           3          aa     qgttggttgggggggggx       r',
-'   qgx   qgggx  qggttggggggx                          r',
+' qk                                        9999       r',
+'           3          aa     qgttggttgggggggggk       r',
+'   qgk   qgggk  qggttggggggk                          r',
 '                        m                           ggm',
 '      d               m                               r',
-'          wgggggggggggggggggggggggggx    wg88gggggggn9r',
+'          wgggggggggggggggggggggggggk    wg88gggggggn9r',
 '         dl                              l     m    r9r',
 '          l   1            m             l     m   0r9r',
-'      qx  l  ggg           m             l    gm   mr9r',
+'      qk  l  qgk           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
-'          9           abbbbbbbbbbbbx     l     m   mr9r',
-' qgx      sbbbbbbbbbbbe                  l         mr9r',
+'          9           abbbbbbbbbbbbk     l     m   mr9r',
+' qgk      sbbbbbbbbbbbe                  l         mr9r',
 '                                         l      7 6mr9r',
-'      qx                                 sbbbbbbbbbbe9r',
+'      qk                                 sbbbbbbbbbbe9r',
 '                           w88ggggggn                 r',
-'         d            gg   l        r                 r',
-'   ddd    qx              dl        r                 r',
+'         d            qk   l        r                 r',
+'   ddd    qk              dl        r                 r',
 '                           9     0  r                 r',
 '    qgx         wggg88gggggggbbbbbbbe                 r',
 '          d     l           r                         r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 'dddl          r                                       r',
-'   l          r                                       r',
-'x  sn88qbbbbbbe                                       r',
-'    l    7            qggggggx                        r',
+'   l        x r                                       r',
+'k  sb88bbbbbbbe                                       r',
+'    l    7            gggggggg                        r',
 '    9 4  7                                            r',
-'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggm',
+'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggm'
 ];
 
 var dictiowall = {
@@ -88,7 +93,7 @@ var dictiowall = {
     'a':11,//pique
     'd':7,
     'q':5,
-    'x':4,
+    'k':4,
 };
 
 //==Joueur et caractéristiques==
@@ -106,9 +111,10 @@ var FLAME = true;
 var JUMPS = 2;
 var doublejumpok=true;
 //Taille
-var SIZE = 2;
+var SIZE = 1;
 //Vie
-var LIFE = 10;
+var LIFE = 6;
+var lifeBar;
 //Arme
 var weapon;
 
@@ -131,24 +137,23 @@ var npcTab = [giveSuperForce, giveArmor, giveFlame, giveDoubleJump, giveSize];
 var breakablegroup;
 var breakable;
 
-var caissegroup;
-var caisse;
+var crategroup;
+var crate;
 
 var spikegroup;
 var spike;
 
+function create() {
 
-function create() { 
-
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+	game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'background');
 
     breakablegroup=game.add.group();
     breakablegroup.enableBody = true;
 
-    caissegroup = game.add.group();
-    caissegroup.enableBody = true;
+    crategroup = game.add.group();
+    crategroup.enableBody = true;
 
     platforms = game.add.group();
     platforms.enableBody = true;
@@ -157,30 +162,32 @@ function create() {
     spikegroup=game.add.group();
     spikegroup.enableBody=true;
 
-    npcgroup = game.add.group();
-    npcgroup.enableBody = true;
-
-    createMap();
-
-    player = game.add.sprite(100, 1750, 'candleguy');
+    player = game.add.sprite(100, 1700, 'candleguy');
     game.physics.arcade.enable(player);
+    player.scale.setTo(SIZE, SIZE);
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
-    player.animations.add('left', [2, 3], 10, true);
-    player.animations.add('right', [0, 1], 10, true);
+    player.animations.add('left', [3, 4], 5, true);
+    player.animations.add('right', [1, 2], 5, true);
+    player.animations.add('fall', [5, 5, 5, 5, 5], 5, true);
+    player.animations.add('jump', [6, 6, 6, 6, 6], 5, true);
+    player.animations.add('attack_left', [8, 8], 10, true);
+    player.animations.add('attack_right', [7, 7], 10, true);
+    player.animations.add('took_dmgs', [9, 10], 5, true);
+    //player.animations.add('died', [10, 10, 10, 10, 10], 5, true);
     this.jumping = false;
     game.camera.follow(player);
+    //game.worldScale += 0.5
+
+    lifeBar = game.add.group();
+
+    npcgroup = game.add.group();
+    npcgroup.enableBody = true;
 
     ennemygroup = game.add.group();
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
-
-    /*ennemy=ennemygroup.create(200, 1800, 'bougie');
-    ennemy.scale.setTo(0.25,0.25);
-    ennemy.body.bounce.y = 0.2;
-    ennemy.body.gravity.y = 300;
-    ennemy.body.collideWorldBounds = true;*/
 
     weapon = game.add.weapon(30, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -189,6 +196,8 @@ function create() {
     game.physics.arcade.enable(weapon.bullets);
 
     weapon.trackSprite(player, 0, 0, true);
+
+    createMap();
 
     //==Controles==
     cursors = game.input.keyboard.createCursorKeys();
@@ -208,14 +217,15 @@ function update() {
     updateShadowTexture();
     //==Physique==
     game.physics.arcade.collide(player, platforms);
-    game.physics.arcade.collide(caissegroup, platforms);
+    game.physics.arcade.collide(crategroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
-    game.physics.arcade.collide(caissegroup, caissegroup);
+    game.physics.arcade.collide(crategroup, crategroup);
     game.physics.arcade.collide(ennemygroup, platforms);
+    game.physics.arcade.collide(ennemygroup, crategroup);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
     game.physics.arcade.collide(player, breakablegroup, checkifbroken, null, this);
-    game.physics.arcade.collide(player, caissegroup);
+    game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
@@ -224,39 +234,46 @@ function update() {
     game.physics.arcade.overlap(player, npcDoubleJump, npcTab[3], null, this);
     game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
 
-
     key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
     key1.onDown.add(platforme, this);
-    //==Déplacements==
+
     player.body.velocity.x = 0;
-    if (cursors.left.isDown)
-    {
+
+    //==Déplacements==
+    if (cursors.left.isDown){
         player.body.velocity.x = -SPEED;
-        //player.animations.play('left');
+        player.animations.play('left');
     }
-    else if (cursors.right.isDown)
-    {
+    else if (cursors.right.isDown){
         player.body.velocity.x = SPEED;
-        //player.animations.play('right');
+        player.animations.play('right');
     }
-    else
-    {
+    else{
         player.animations.stop();
-        player.frame = 4;
+        player.frame = 0;
     }
-    if ((fireButton.isDown)&&(FLAME))
-    {
+    if (fireButton.isDown){
         if(cursors.right.isDown){
-            weapon.fire();
+            //player.animations.play('attack_right');
+            player.frame = 7;
+            if (FLAME){
+                weapon.fire();
+            }
         }
         if(cursors.left.isDown){
-            
-            weapon.fireAtXY(player.x-1,player.y);
+            //player.animations.play('attack_left');
+            player.frame = 8;
+            if (FLAME){
+                weapon.fireAtXY(player.x-1,player.y);
+
+            }
         }
         else{
-            weapon.fire();
+            player.animations.play('attack_right');
+            if (FLAME){
+                weapon.fire();
+            }
         }
-        
     }
 
     //==Saut / Double saut==
@@ -268,18 +285,19 @@ function update() {
     if (this.jumps == 2 && cursors.up.isDown && cursors.up.duration < 200 && onTheGround) {
         player.body.velocity.y = -JUMPSPEED;
         this.jumping = true;
+        player.frame = 6;
     }
     if (this.jumps == 1 && cursors.up.isDown && cursors.up.duration < 200) {
         player.body.velocity.y = -DOUBLEJUMPSPEED;
         this.jumping = true;
+        player.frame = 6;
     }
     if (this.jumping && cursors.up.isUp) {
         this.jumps--;
         this.jumping = false;
     }
     
-    lightSprite.reset(game.camera.x, game.camera.y);    
-    updateShadowTexture();
+    lightSprite.reset(game.camera.x, game.camera.y);
 }
 
 //==Création de la TileMap==
@@ -293,22 +311,23 @@ function createMap(){
                     breakable.frame=dictiowall[8];
                 }
                 else if (map[i][j]==7){
-                    caisse=caissegroup.create(j*64,i*64,'caissesprite');
-                    caisse.body.gravity.y = 300;
+                    crate=crategroup.create(j*64,i*64,'cratesprite');
+                    crate.body.gravity.y = 300;
                 }
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
-
-
                 }
                 else if(map[i][j]=='d'){
-                    
+
                 }
                 else if (map[i][j] in dictiowall && map[i][j] != 'd'){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
                     ground.body.immovable = true;
                     ground.frame=dictiowall[map[i][j]];
+                }
+                else if (map[i][j] == 'x'){
+                    createFoe(i, j);
                 }
             }
         }
@@ -333,27 +352,27 @@ function placeNPC(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] == '0'){
-                npcSuperForce = npcgroup.create(j*64,i*64,'npc');
+                npcSuperForce = npcgroup.create(j*64,i*64,'npcSuperForce');
                 npcSuperForce.anchor.y -= 0.075;
                 npcSuperForce.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '1'){
-                npcArmor = npcgroup.create(j*64,i*64,'npc');
+                npcArmor = npcgroup.create(j*64,i*64,'npcArmor');
                 npcArmor.anchor.y -= 0.075;
                 npcArmor.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '2'){
-                npcFlame = npcgroup.create(j*64,i*64,'npc');
+                npcFlame = npcgroup.create(j*64,i*64,'npcFlame');
                 npcFlame.anchor.y -= 0.075;
                 npcFlame.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '3'){
-                npcDoubleJump = npcgroup.create(j*64,i*64,'npc');
+                npcDoubleJump = npcgroup.create(j*64,i*64,'npcDoubleJump');
                 npcDoubleJump.anchor.y -= 0.075;
                 npcDoubleJump.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '4'){
-                npcSize = npcgroup.create(j*64,i*64,'npc');
+                npcSize = npcgroup.create(j*64,i*64,'npcSize');
                 npcSize.anchor.y -= 0.075;
                 npcSize.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
@@ -361,12 +380,22 @@ function placeNPC(){
     }
 }
 
-//==Fonction de don de capacité==
+/*function updateEnnemies(){
+    ennemygroup.f
+}*/
+
+//==Fonctions de don de capacité==
 function giveSuperForce(){
     console.log('give super force');
     npcSuperForce.animations.play('giveAbility');
-    MIGHT = 1;
-    //caissegroup.body.immovable=true;
+    for (var i=0; i<crategroup.children.length; i++){
+        setCrateImmovable(crategroup.children[i]);
+    }
+}
+
+function setCrateImmovable(crate){
+    crate.body.immovable = true;
+    crate.body.moves = false;
 }
 
 function giveArmor(){
@@ -394,23 +423,28 @@ function giveDoubleJump(){
 function giveSize(){
     console.log('give size');
     npcSize.animations.play('giveAbility');
-    SIZE = 1;
+    SIZE = 0.5;
+    player.scale.setTo(SIZE, SIZE);
 }
 
 //==Création d'ennemis (à partir d'une position)
 function createFoe(x,y){
-    ennemy=ennemygroup.create(x*64,y*64,'ennemy');
-    ennemy.enableBody=true;
-    ennemy.scale.setTo(0.25,0.25);
+    ennemy = ennemygroup.create(y*64, x*64,'foe');
+    ennemy.animations.add('left', [0, 1, 2]);
+    ennemy.animations.add('right', [4, 5, 6]);
+    ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
     ennemy.body.collideWorldBounds = true;
+    ennemy.life = 3;
 }
 
 //==Perte de vie==
 function loseLife(){
     LIFE--;
-    player.y=player.y-50;
+    player.y -= 50;
+        player.animations.play('took_dmgs');
+    console.log(LIFE);
 }
 
 //==Destruction des flames==
@@ -419,16 +453,12 @@ function destroybullet(bullet,platform){
 }
 
 function checkifbroken(player,platform){
-    console.log('on breakable');
-    console.log(doublejumpok);
     if (!doublejumpok){
-        console.log('beak !');
         platform.kill();
     }
 }
 
 function platforme(){
-    //jumps == 2
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if(map[i][j]=='d'){
@@ -441,9 +471,9 @@ function platforme(){
 }
 
 function updateShadowTexture(){    
-        // Draw shadow
+
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
-        shadowTexture.context.fillRect(0, 0, game.width, game.height);    
+        shadowTexture.context.fillRect(0, 0, game.width, game.height);
         var radius = 400 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
@@ -457,12 +487,10 @@ function updateShadowTexture(){
         shadowTexture.context.fill();    
         // This just tells the engine it should update the texture cache    
         shadowTexture.dirty = true;
-        
 }
 
 function render() {
 
     //smokeEmitter.debug(432, 522);
     //flameEmitter.debug(10, 522);
-
 }
