@@ -41,10 +41,17 @@ var map = [
 '           3                                          r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
+<<<<<<< HEAD
 '                      m                               r',
 '       gg wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '   dd     l                              l     m    r9r',
 '          l  1             m             l     m   0r9r',
+=======
+'      d               m                               r',
+'          wgggggggggggggggggggggggggg    wg88gggggggn9r',
+'         dl                              l     m    r9r',
+'    ggg   l  p             m             l     m   0r9r',
+>>>>>>> 1c993fc5613ec463d01e7183667f8d8f0280a32d
 '          l  gg            m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
@@ -60,11 +67,18 @@ var map = [
 '   wg88gggggggn sbb88bababbbe                         r',
 '  dl          r                                       r',
 '   l          r                                       r',
+<<<<<<< HEAD
 '   l          r                                       r',
 'g  sb88bbbbbbbe       gggggggg                        r',
 '    l    r                                            r',
 '    9 4  r                                            r',
 'ggggggggggggggggggttttggggggtttggggggggggggggtttggggggg',
+=======
+'g  sb88bbbbbbbe                                       r',
+' d  l    r            gggggggg                        r',
+'    9 p  r                                            r',
+'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
+>>>>>>> 1c993fc5613ec463d01e7183667f8d8f0280a32d
 ];
 
 var dictiowall = {
