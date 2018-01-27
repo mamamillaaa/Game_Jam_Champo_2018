@@ -13,7 +13,7 @@ function preload() {
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
     game.load.image('cratesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamond.png');
-    game.load.image('candleguy', 'assets/candleguy.png');
+    game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npc', 'assets/npc.png', 32, 64);
     game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
@@ -67,7 +67,7 @@ var map = [
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 'dddl          r                                       r',
-'   l          r                                       r',
+'   l        x r                                       r',
 'g  sb88bbbbbbbe                                       r',
 '    l    7            gggggggg                        r',
 '    9 4  7                                            r',
@@ -162,8 +162,14 @@ function create() {
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
-    player.animations.add('left', [2, 3], 10, true);
-    player.animations.add('right', [0, 1], 10, true);
+    player.animations.add('left', [3, 4], 5, true);
+    player.animations.add('right', [1, 2], 5, true);
+    player.animations.add('fall', [5, 5, 5, 5, 5], 5, true);
+    player.animations.add('jump', [6, 6, 6, 6, 6], 5, true);
+    player.animations.add('attack_left', [8, 8], 10, true);
+    player.animations.add('attack_right', [7, 7], 10, true);
+    player.animations.add('took_dmgs', [9, 10], 5, true);
+    //player.animations.add('died', [10, 10, 10, 10, 10], 5, true);
     this.jumping = false;
     game.camera.follow(player);
     //game.worldScale += 0.5
@@ -222,39 +228,46 @@ function update() {
     game.physics.arcade.overlap(player, npcDoubleJump, npcTab[3], null, this);
     game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
 
-
     key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
     key1.onDown.add(platforme, this);
-    //==Déplacements==
+
     player.body.velocity.x = 0;
-    if (cursors.left.isDown)
-    {
+
+    //==Déplacements==
+    if (cursors.left.isDown){
         player.body.velocity.x = -SPEED;
-        //player.animations.play('left');
+        player.animations.play('left');
     }
-    else if (cursors.right.isDown)
-    {
+    else if (cursors.right.isDown){
         player.body.velocity.x = SPEED;
-        //player.animations.play('right');
+        player.animations.play('right');
     }
-    else
-    {
+    else{
         player.animations.stop();
-        player.frame = 4;
+        player.frame = 0;
     }
-    if ((fireButton.isDown)&&(FLAME))
-    {
+    if (fireButton.isDown){
         if(cursors.right.isDown){
-            weapon.fire();
+            //player.animations.play('attack_right');
+            player.frame = 7;
+            if (FLAME){
+                weapon.fire();
+            }
         }
         if(cursors.left.isDown){
-            
-            weapon.fireAtXY(player.x-1,player.y);
+            //player.animations.play('attack_left');
+            player.frame = 8;
+            if (FLAME){
+                weapon.fireAtXY(player.x-1,player.y);
+
+            }
         }
         else{
-            weapon.fire();
+            player.animations.play('attack_right');
+            if (FLAME){
+                weapon.fire();
+            }
         }
-        
     }
 
     //==Saut / Double saut==
@@ -266,10 +279,12 @@ function update() {
     if (this.jumps == 2 && cursors.up.isDown && cursors.up.duration < 200 && onTheGround) {
         player.body.velocity.y = -JUMPSPEED;
         this.jumping = true;
+        player.frame = 6;
     }
     if (this.jumps == 1 && cursors.up.isDown && cursors.up.duration < 200) {
         player.body.velocity.y = -DOUBLEJUMPSPEED;
         this.jumping = true;
+        player.frame = 6;
     }
     if (this.jumping && cursors.up.isUp) {
         this.jumps--;
@@ -296,12 +311,9 @@ function createMap(){
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
-
-
                 }
                 else if(map[i][j]=='d'){
-                    
-                    console.log("d");
+
                 }
                 else if (map[i][j] in dictiowall && map[i][j] != 'd'){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
@@ -411,18 +423,22 @@ function giveSize(){
 
 //==Création d'ennemis (à partir d'une position)
 function createFoe(x,y){
-    console.log('foe');
     ennemy = ennemygroup.create(y*64, x*64,'foe');
+    ennemy.animations.add('left', [0, 1, 2]);
+    ennemy.animations.add('right', [4, 5, 6]);
     ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
     ennemy.body.collideWorldBounds = true;
+    ennemy.life = 3;
 }
 
 //==Perte de vie==
 function loseLife(){
     LIFE--;
-    player.y=player.y-50;
+    player.y -= 50;
+        player.animations.play('took_dmgs');
+    console.log(LIFE);
 }
 
 //==Destruction des flames==
@@ -437,7 +453,6 @@ function checkifbroken(player,platform){
 }
 
 function platforme(){
-    //jumps == 2
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if(map[i][j]=='d'){
@@ -450,11 +465,10 @@ function platforme(){
 }
 
 function updateShadowTexture(){    
-        // Draw shadow    
-        console.log ("test");
+        // Draw shadow 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);    
-        var radius = 100 + game.rnd.integerInRange(1,10);
+        var radius = 300 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
