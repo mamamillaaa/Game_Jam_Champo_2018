@@ -11,6 +11,8 @@ function preload() {
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamong.png');
+
+    game.load.image('candleguy', 'assets/candleguy.png');
 }
 
 
@@ -34,7 +36,7 @@ d: plateforme doublesaut
 */
 
 var map = [
-'                                                      r',
+'                                                    2 r',
 '                                           gggggggggggn',
 ' gg                                        9999       r',
 '                             ggttggttgggggggggg       r',
@@ -44,8 +46,8 @@ var map = [
 '      d               m                               r',
 '          wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '         dl                              l     m    r9r',
-'    ggg   l  p             m             l     m   0r9r',
-'          l  gg            m             l    gm   mr9r',
+'    ggg   l   1            m             l     m   0r9r',
+'          l  ggg           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
 '  gggg    sbbbbbbbbbbbb                  l         mr9r',
@@ -54,7 +56,7 @@ var map = [
 '         gg                w88111111n                 r',
 '   d                  gg   l        r                 r',
 '                          dl        r                 r',
-'    ggg                    9        r                 r',
+'    ggg                    9     0  r                 r',
 '          d     wggg88gggggmmbbbbbbbe                 r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
@@ -62,7 +64,7 @@ var map = [
 '   l          r                                       r',
 'g  sb88bbbbbbbe                                       r',
 ' d  l    r            gggggggg                        r',
-'    9 p  r                                            r',
+'    9 4  r                                            r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
 ];
 
@@ -160,8 +162,8 @@ function create() {
 
     createMap();
 
-	player = game.add.sprite(100, 1750, 'dudebougie');
-    player.scale.setTo(0.20,0.20);
+	player = game.add.sprite(100, 1750, 'candleguy');
+    //player.scale.setTo(0.02,0.02);
 	game.physics.arcade.enable(player);
 	player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
@@ -221,12 +223,12 @@ function update() {
     if (cursors.left.isDown)
     {
         player.body.velocity.x = -SPEED;
-        player.animations.play('left');
+        //player.animations.play('left');
     }
     else if (cursors.right.isDown)
     {
         player.body.velocity.x = SPEED;
-        player.animations.play('right');
+        //player.animations.play('right');
     }
     else
     {
@@ -296,29 +298,29 @@ function createMap(){
     placeNPC();
 }
 
-//==Placement de NPC==
+//==Placement de NPCs==
 function placeNPC(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] == '0'){
-                npcSuperForce = npcgroup.create(j*64,i*64,'bougie');
-                npcSuperForce.scale.setTo(0.25,0.25);
+                npcSuperForce = npcgroup.create(j*64,i*64,'candleguy');
+                //npcSuperForce.scale.setTo(0.25,0.25);
             }
             if (map[i][j] == '1'){
-                npcArmor = npcgroup.create(j*64,i*64,'bougie');
-                npcArmor.scale.setTo(0.25,0.25);
+                npcArmor = npcgroup.create(j*64,i*64,'candleguy');
+                //npcArmor.scale.setTo(0.25,0.25);
             }
             if (map[i][j] == '2'){
-                npcFlame = npcgroup.create(j*64,i*64,'bougie');
-                npcFlame.scale.setTo(0.25,0.25);
+                npcFlame = npcgroup.create(j*64,i*64,'candleguy');
+                //npcFlame.scale.setTo(0.25,0.25);
             }
             if (map[i][j] == '3'){
-                npcDoubleJump = npcgroup.create(j*64,i*64,'bougie');
-                npcDoubleJump.scale.setTo(0.25,0.25);
+                npcDoubleJump = npcgroup.create(j*64,i*64,'candleguy');
+                //npcDoubleJump.scale.setTo(0.25,0.25);
             }
             if (map[i][j] == '4'){
-                npcSize = npcgroup.create(j*64,i*64,'bougie');
-                npcSize.scale.setTo(0.25,0.25);
+                npcSize = npcgroup.create(j*64,i*64,'candleguy');
+                //npcSize.scale.setTo(0.25,0.25);
             }
         }
     }
