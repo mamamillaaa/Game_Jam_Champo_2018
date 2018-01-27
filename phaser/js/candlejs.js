@@ -10,7 +10,7 @@ function preload() {
     game.load.image('background', 'assets/michel-galaup.jpg');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
-    game.load.image('spikesprite', 'assets/diamong.png');
+    game.load.image('spikesprite', 'assets/diamond.png');
 
     game.load.image('candleguy', 'assets/candleguy.png');
 }
@@ -53,19 +53,11 @@ var map = [
 '  gggg    sbbbbbbbbbbbb                  l         mr9r',
 '                                         l      7 6mr9r',
 '       d                                 sbbbbbbbbbbe9r',
-<<<<<<< HEAD
-'      g                    w88111111n                 r',
-' g d  g  g            gg   l        r                 r',
-'      g                   dl        r                 r',
-'                           9        r                 r',
-'   g     g      wggg88gggggmmbbbbbbbe                 r',
-=======
-'         gg                w88111111n                 r',
+'         gg                w88 gggggn                 r',
 '   d                  gg   l        r                 r',
 '                          dl        r                 r',
 '    ggg                    9     0  r                 r',
 '          d     wggg88gggggmmbbbbbbbe                 r',
->>>>>>> 08c81746af4751b8fb95ffc372eaae4403f513fa
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 '  dl          r                                       r',
@@ -296,30 +288,18 @@ function createMap(){
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
-                }
-<<<<<<< HEAD
-                else if(map[i][j]=='t'){
-                    spike=spikegroup.create(j*64,i*64,'spikesprite');
-                    spike.body.immovable=true;
+
 
                 }
                 else if(map[i][j]=='d'){
                     
                     console.log("d");
                 }
-                else{
-                        var ground=platforms.create(j*64, i*64, 'spritewall');
-                        ground.body.immovable = true;
-                        ground.frame=dictiowall[map[i][j]];
-                
-            }
-=======
                 else if (map[i][j] in dictiowall){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
                     ground.body.immovable = true;
                     ground.frame=dictiowall[map[i][j]];
                 }
->>>>>>> 08c81746af4751b8fb95ffc372eaae4403f513fa
             }
         }
     }
@@ -358,7 +338,7 @@ function placeNPC(){
 function giveSuperForce(){
     console.log('give super force');
     MIGHT = 1;
-    caissegroup.body.immovable=true;
+    //caissegroup.body.immovable=true;
 }
 
 function giveArmor(){
