@@ -1,8 +1,16 @@
 var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update, render: render});
 
+
 function preload() {
+<<<<<<< HEAD
+    
+    
+	game.load.image('ground', 'assets/platform_01.png');
+	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+=======
     game.load.image('ground', 'assets/platform_01.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+>>>>>>> 3481c0ecb19d297ece4c209dec523c86bc553941
     game.load.spritesheet('dudebougie', 'assets/dudebougie.png', 283, 247);
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
@@ -42,33 +50,47 @@ var map = [
 '                                                    2 r',
 '                                           gggggggggggn',
 ' gg                                        9999       r',
-'                             ggttggttgggggggggg       r',
-'           3                                          r',
+'           3          aa     ggttggttgggggggggg       r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
 '      d               m                               r',
 '          wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '         dl                              l     m    r9r',
+<<<<<<< HEAD
 '    ggg   l               m             ll     m   0r9r',
 '          l  ggg           m             l    gm   mr9r',
+=======
+'          l   1            m             l     m   0r9r',
+'      gg  l  ggg           m             l    gm   mr9r',
+>>>>>>> 9bcb27b72f9a13daa30b600cfdc5d3569b3de380
 ' d        l                9             l     m   mr9r',
-'          9     1     abbbbbbbbbbbbb     l     m   mr9r',
-'  gggg    sbbbbbbbbbbbb                  l         mr9r',
+'          9           abbbbbbbbbbbbb     l     m   mr9r',
+' ggg      sbbbbbbbbbbbb                  l         mr9r',
 '                                         l      7 6mr9r',
-'       d                                 sbbbbbbbbbbe9r',
-'         gg                w88ggggggn                 r',
-'   d                  gg   l        r                 r',
-'                          dl        r                 r',
-'    ggg                    9     0  r                 r',
-'          d     wggg88gggggmmbbbbbbbe                 r',
+'      gg                                 sbbbbbbbbbbe9r',
+'                           w88ggggggn                 r',
+'         d            gg   l        r                 r',
+'   ddd    gg              dl        r                 r',
+'                           9     0  r                 r',
+'    ggg         wggg88gggggmmbbbbbbbe                 r',
+'          d     l           r                         r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
+<<<<<<< HEAD
 '  dl          r                                       r',
 '   l    7   x r                                       r',
 'g  sb88bbbbbbbe                                       r',
 ' d  l    7            gggggggg                        r',
 '    9 4  7      x                                     r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
+=======
+'dddl          r                                       r',
+'   l          r                                       r',
+'g  sb88bbbbbbbe                                       r',
+'    l    7            gggggggg                        r',
+'    9 4  7                                            r',
+'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggm',
+>>>>>>> 9bcb27b72f9a13daa30b600cfdc5d3569b3de380
 ];
 
 var dictiowall = {
@@ -135,7 +157,15 @@ var spike;
 
 
 function create() {
+<<<<<<< HEAD
+    
+    
+       
+
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+=======
     game.physics.startSystem(Phaser.Physics.ARCADE);
+>>>>>>> 3481c0ecb19d297ece4c209dec523c86bc553941
 
     game.add.sprite(0, 0, 'background');
 
@@ -186,10 +216,25 @@ function create() {
     //==Controles==
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+<<<<<<< HEAD
 
+=======
+    
+    
+    
+    shadowTexture = game.add.bitmapData(game.width, game.height);    
+    // Create an object that will use the bitmap as a texture    
+    lightSprite = game.add.image(game.camera.x, game.camera.y, shadowTexture);    
+    // Set the blend mode to MULTIPLY. This will darken the colors of    
+    // everything below this sprite.    
+    lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+>>>>>>> 9bcb27b72f9a13daa30b600cfdc5d3569b3de380
 }
 
 function update() {
+    //==Lumiere==
+    lightSprite.reset(game.camera.x, game.camera.y);    
+    updateShadowTexture();
     //==Physique==
     game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(crategroup, platforms);
@@ -210,6 +255,8 @@ function update() {
     game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
 
 
+    key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+    key1.onDown.add(platforme, this);
     //==Déplacements==
     player.body.velocity.x = 0;
     if (cursors.left.isDown)
@@ -260,8 +307,14 @@ function update() {
         this.jumps--;
         this.jumping = false;
     }
+<<<<<<< HEAD
 
     //updateEnnemies();
+=======
+    
+    lightSprite.reset(game.camera.x, game.camera.y);    
+    updateShadowTexture();
+>>>>>>> 9bcb27b72f9a13daa30b600cfdc5d3569b3de380
 }
 
 //==Création de la TileMap==
@@ -281,6 +334,12 @@ function createMap(){
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
+
+
+                }
+                else if(map[i][j]=='d'){
+                    
+                    console.log("d");
                 }
                 else if (map[i][j] in dictiowall && map[i][j] != 'd'){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
@@ -350,6 +409,7 @@ function giveSuperForce(){
     console.log('give super force');
     npcSuperForce.animations.play('giveAbility');
     MIGHT = 1;
+<<<<<<< HEAD
     for (var i=0; i<crategroup.children.length; i++){
         setCrateImmovable(crategroup.children[i]);
     }
@@ -358,6 +418,9 @@ function giveSuperForce(){
 function setCrateImmovable(crate){
     crate.body.immovable = true;
     crate.body.moves = false;
+=======
+    //caissegroup.body.immovable=true;
+>>>>>>> 9bcb27b72f9a13daa30b600cfdc5d3569b3de380
 }
 
 function giveArmor(){
@@ -416,6 +479,41 @@ function checkifbroken(player,platform){
     }
 }
 
+<<<<<<< HEAD
 function render(){
     
+=======
+function platforme(){
+    //jumps == 2
+    for (var i=0; i<map.length; i++){
+        for (var j=0; j<map[i].length; j++){
+            if(map[i][j]=='d'){
+                var ground=platforms.create(j*64, i*64, 'spritewall');
+                ground.body.immovable = true;
+                ground.frame=dictiowall[map[i][j]];
+            }
+        }
+    }
+}
+
+function updateShadowTexture(){    
+        // Draw shadow    
+        console.log ("test");
+        shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
+        shadowTexture.context.fillRect(0, 0, game.width, game.height);    
+        var radius = 100 + game.rnd.integerInRange(1,10);
+        var heroX = player.x - game.camera.x;       
+        var heroY = player.y - game.camera.y;       
+        // Draw circle of light with a soft edge    
+        var gradient = shadowTexture.context.createRadialGradient(heroX, heroY, 100 * 0.75, heroX, heroY, radius);
+        gradient.addColorStop(0, "rgba(255, 255, 255, 1.0)");    
+        gradient.addColorStop(1, "rgba(255, 255, 255, 0.0)");    
+        shadowTexture.context.beginPath();    
+        shadowTexture.context.fillStyle = gradient;    
+        shadowTexture.context.arc(heroX, heroY, radius, 0, Math.PI*2, false);   
+        shadowTexture.context.fill();    
+        // This just tells the engine it should update the texture cache    
+        shadowTexture.dirty = true;
+        
+>>>>>>> 9bcb27b72f9a13daa30b600cfdc5d3569b3de380
 }
