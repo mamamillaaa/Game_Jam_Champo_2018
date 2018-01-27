@@ -3,6 +3,7 @@ var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: pre
 function preload() {
 	game.load.image('ground', 'assets/platform_01.png');
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.image('bougie', 'assets/bougie.png');
 }
 
 
@@ -120,6 +121,12 @@ function create() {
     /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
 
 
+    ennemy=ennemygroup.create(200, 1800, 'bougie');
+    ennemy.scale.setTo(0.25,0.25);
+    ennemy.body.bounce.y = 0.2;
+    ennemy.body.gravity.y = 300;
+    ennemy.body.collideWorldBounds = true;
+
     weapon = game.add.weapon(30, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
     weapon.bulletSpeed = 300;
@@ -136,6 +143,7 @@ function create() {
 function update() {
     //==Physique==
 	game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(ennemygroup, platforms);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
 
@@ -240,6 +248,10 @@ function giveSize(){
 function createFoe(x,y){
     ennemy=ennemygroup.create(x*64,y*64,'ennemy');
     ennemy.enableBody=true;
+    ennemy.scale.setTo(0.25,0.25);
+    ennemy.body.bounce.y = 0.2;
+    ennemy.body.gravity.y = 300;
+    ennemy.body.collideWorldBounds = true;
 }
 
 //==Perte de vie==
