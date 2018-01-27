@@ -10,7 +10,7 @@ function preload() {
     game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
-    game.load.image('spikesprite', 'assets/diamong.png');
+    game.load.image('spikesprite', 'assets/diamond.png');
 
     game.load.image('candleguy', 'assets/candleguy.png');
 }
@@ -237,7 +237,7 @@ function update() {
         player.animations.stop();
         player.frame = 4;
     }
-    if (fireButton.isDown)
+    if ((fireButton.isDown)&&(FLAME))
     {
         if(cursors.right.isDown){
             weapon.fire();
@@ -372,6 +372,7 @@ function createFoe(x,y){
 
 function loseLife(){
     LIFE--;
+    player.y=player.y-50;
 }
 
 //==Destruction des flames==
