@@ -55,14 +55,15 @@ var map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 ];
-var weapon;
+
+//==Joueur et caractéristiques==
 var player;
 //Puissance d'attaque :
 var MIGHT = 3;
 //Grosse armure et vitesse de déplacement :
 var ARMOR = true;
 var SPEED = 100;
-var JUMPSPEED = 250;
+var JUMPSPEED = 300;
 var DOUBLEJUMPSPEED = 150;
 //Flame :
 var FLAME = true;
@@ -72,13 +73,24 @@ var JUMPS = 2;
 var SIZE = 2;
 //Vie
 var LIFE = 10;
+//Arme
+var weapon;
 
 var platforms;
+
 var cursors;
+var fireButton;
 
 var ennemygroup;
 var ennemy;
-var fireButton;
+
+var npcgroup;
+var npcSuperForce;
+var npcArmor;
+var npcFlame;
+var npcDoubleJump;
+var npcSize;
+var npcTab = [giveSuperForce, giveArmor, giveFlame, giveDoubleJump, giveSize];
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -99,15 +111,14 @@ function create() {
     this.jumping = false;
     game.camera.follow(player);
 
-<<<<<<< HEAD
     ennemygroup = game.add.group();
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
-=======
-    ennemygroup=game.add.group();
-    ennemygroup.enableBody=true;
-    ennemygroup.physicsBodyType= Phaser.Physics.ARCADE;
->>>>>>> 590654a15b7235a7e062f1575d0739788e9ddddf
+
+    npcgroup = game.add.group();
+    npcgroup.enableBody = true;
+    /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
+
 
     weapon = game.add.weapon(30, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -117,19 +128,25 @@ function create() {
 
     weapon.trackSprite(player, 0, 0, true);
 
-
-    this.jumping = false;
-    game.camera.follow(player);
-
-    fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    //==Controles==
     cursors = game.input.keyboard.createCursorKeys();
+    fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 }
 
 function update() {
+    //==Physique==
 	game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
 
+    game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
+    game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
+    game.physics.arcade.overlap(player, npcFlame, npcTab[2], null, this);
+    game.physics.arcade.overlap(player, npcDoubleJump, npcTab[3], null, this);
+    game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
+
+
+    //==Déplacements==
 	player.body.velocity.x = 0;
     if (cursors.left.isDown)
     {
@@ -161,13 +178,13 @@ function update() {
         
     }
 
-
+    //==Saut / Double saut==
     var onTheGround = player.body.touching.down;
     if (onTheGround) {
         this.jumps = JUMPS;
         this.jumping = false;
     }
-    if (this.jumps == 2 && cursors.up.isDown && cursors.up.duration < 200) {
+    if (this.jumps == 2 && cursors.up.isDown && cursors.up.duration < 200 && onTheGround) {
         player.body.velocity.y = -JUMPSPEED;
         this.jumping = true;
     }
@@ -181,6 +198,8 @@ function update() {
     }
 }
 
+//==Création de la TileMap==
+
 function createMap(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
@@ -193,6 +212,7 @@ function createMap(){
     }
 }
 
+//==Fonction de don de capacité==
 function giveSuperForce(){
     MIGHT = 1;
 }
@@ -215,19 +235,21 @@ function giveSize(){
     SIZE = 1;
 }
 
+//==Création d'ennemis (à partir d'une position)
+
 function createFoe(x,y){
     ennemy=ennemygroup.create(x*64,y*64,'ennemy');
     ennemy.enableBody=true;
 }
 
+//==Perte de vie==
+
 function loseLife(){
-<<<<<<< HEAD
     LIFE--;
-=======
-    life--;
 }
+
+//==Destruction des flames==
 
 function destroybullet(bullet,platform){
     bullet.kill();
->>>>>>> 590654a15b7235a7e062f1575d0739788e9ddddf
 }
