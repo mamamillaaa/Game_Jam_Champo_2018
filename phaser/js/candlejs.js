@@ -13,6 +13,9 @@ function preload() {
     game.load.image('spikesprite', 'assets/diamond.png');
 
     game.load.image('candleguy', 'assets/candleguy.png');
+    game.load.spritesheet('npc', 'assets/npc.png', 32, 64);
+    game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
+
 }
 
 
@@ -83,14 +86,6 @@ var dictiowall = {
     'd':12,
 };
 
-var dictioNPC = {
-    0 : 'npcSuperForce',
-    1 : 'npcArmor',
-    2 : 'npcFlame',
-    3 : 'npcDoubleJump',
-    4 : 'npcSize'
-};
-
 //==Joueur et caractéristiques==
 var player;
 //Puissance d'attaque :
@@ -154,11 +149,11 @@ function create() {
 	platforms.enableBody = true;
     game.world.setBounds(0, 0, 4000, map.width*64);
 
-    npcgroup = game.add.group();
-    npcgroup.enableBody = true;
-
     spikegroup=game.add.group();
     spikegroup.enableBody=true;
+
+    npcgroup = game.add.group();
+    npcgroup.enableBody = true;
 
     createMap();
 
@@ -176,10 +171,6 @@ function create() {
     ennemygroup = game.add.group();
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
-
-
-    /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
-
 
     /*ennemy=ennemygroup.create(200, 1800, 'bougie');
     ennemy.scale.setTo(0.25,0.25);
@@ -306,24 +297,24 @@ function placeNPC(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] == '0'){
-                npcSuperForce = npcgroup.create(j*64,i*64,'candleguy');
-                //npcSuperForce.scale.setTo(0.25,0.25);
+                npcSuperForce = npcgroup.create(j*64,i*64,'npc');
+                npcSuperForce.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '1'){
-                npcArmor = npcgroup.create(j*64,i*64,'candleguy');
-                //npcArmor.scale.setTo(0.25,0.25);
+                npcArmor = npcgroup.create(j*64,i*64,'npc');
+                npcArmor.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '2'){
-                npcFlame = npcgroup.create(j*64,i*64,'candleguy');
-                //npcFlame.scale.setTo(0.25,0.25);
+                npcFlame = npcgroup.create(j*64,i*64,'npc');
+                npcFlame.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '3'){
-                npcDoubleJump = npcgroup.create(j*64,i*64,'candleguy');
-                //npcDoubleJump.scale.setTo(0.25,0.25);
+                npcDoubleJump = npcgroup.create(j*64,i*64,'npc');
+                npcDoubleJump.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '4'){
-                npcSize = npcgroup.create(j*64,i*64,'candleguy');
-                //npcSize.scale.setTo(0.25,0.25);
+                npcSize = npcgroup.create(j*64,i*64,'npc');
+                npcSize.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
         }
     }
@@ -332,33 +323,37 @@ function placeNPC(){
 //==Fonction de don de capacité==
 function giveSuperForce(){
     console.log('give super force');
+    npcSuperForce.animations.play('giveAbility');
     MIGHT = 1;
     caissegroup.body.immovable=true;
 }
 
 function giveArmor(){
     console.log('give armor');
+    npcArmor.animations.play('giveAbility');
     ARMOR = false;
     SPEED = 200;
 }
 
 function giveFlame(){
     console.log('give flame');
+    npcFlame.animations.play('giveAbility');
     FLAME = false;
 }
 
 function giveDoubleJump(){
     console.log('give double jump');
+    npcDoubleJump.animations.play('giveAbility');
     JUMPS = 1;
 }
 
 function giveSize(){
     console.log('give size');
+    npcSize.animations.play('giveAbility');
     SIZE = 1;
 }
 
 //==Création d'ennemis (à partir d'une position)
-
 function createFoe(x,y){
     ennemy=ennemygroup.create(x*64,y*64,'ennemy');
     ennemy.enableBody=true;
@@ -369,20 +364,17 @@ function createFoe(x,y){
 }
 
 //==Perte de vie==
-
 function loseLife(){
     LIFE--;
     player.y=player.y-50;
 }
 
 //==Destruction des flames==
-
 function destroybullet(bullet,platform){
     bullet.kill();
 }
 
 function checkifbroken(player,platform){
-
     if (doublejumpok==false){
         platform.kill();
     }
