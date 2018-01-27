@@ -15,7 +15,11 @@ function preload() {
     game.load.image('spikesprite', 'assets/diamond.png');
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
-    game.load.spritesheet('npc', 'assets/npc.png', 32, 64);
+    game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
+    game.load.spritesheet('npcArmor', 'assets/npcArmor.png', 32, 64);
+    game.load.spritesheet('npcFlame', 'assets/npcFlame.png', 32, 64);
+    game.load.spritesheet('npcDoubleJump', 'assets/npcDoubleJump.png', 32, 64);
+    game.load.spritesheet('npcSize', 'assets/npcSize.png', 32, 64);
     game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
 
@@ -135,7 +139,6 @@ var crate;
 
 var spikegroup;
 var spike;
-
 
 function create() {
 
@@ -346,27 +349,27 @@ function placeNPC(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] == '0'){
-                npcSuperForce = npcgroup.create(j*64,i*64,'npc');
+                npcSuperForce = npcgroup.create(j*64,i*64,'npcSuperForce');
                 npcSuperForce.anchor.y -= 0.075;
                 npcSuperForce.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '1'){
-                npcArmor = npcgroup.create(j*64,i*64,'npc');
+                npcArmor = npcgroup.create(j*64,i*64,'npcArmor');
                 npcArmor.anchor.y -= 0.075;
                 npcArmor.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '2'){
-                npcFlame = npcgroup.create(j*64,i*64,'npc');
+                npcFlame = npcgroup.create(j*64,i*64,'npcFlame');
                 npcFlame.anchor.y -= 0.075;
                 npcFlame.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '3'){
-                npcDoubleJump = npcgroup.create(j*64,i*64,'npc');
+                npcDoubleJump = npcgroup.create(j*64,i*64,'npcDoubleJump');
                 npcDoubleJump.anchor.y -= 0.075;
                 npcDoubleJump.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '4'){
-                npcSize = npcgroup.create(j*64,i*64,'npc');
+                npcSize = npcgroup.create(j*64,i*64,'npcSize');
                 npcSize.anchor.y -= 0.075;
                 npcSize.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
@@ -467,8 +470,8 @@ function platforme(){
 function updateShadowTexture(){    
         // Draw shadow 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
-        shadowTexture.context.fillRect(0, 0, game.width, game.height);    
-        var radius = 300 + game.rnd.integerInRange(1,10);
+        shadowTexture.context.fillRect(0, 0, game.width, game.height);
+        var radius = 400 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
@@ -481,4 +484,10 @@ function updateShadowTexture(){
         shadowTexture.context.fill();    
         // This just tells the engine it should update the texture cache    
         shadowTexture.dirty = true;
+}
+
+function render() {
+
+    //smokeEmitter.debug(432, 522);
+    //flameEmitter.debug(10, 522);
 }
