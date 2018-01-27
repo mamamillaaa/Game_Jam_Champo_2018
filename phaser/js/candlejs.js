@@ -8,6 +8,8 @@ function preload() {
     game.load.image('bougie', 'assets/bougie.png');
     game.load.image('bullet', 'assets/flamme.png');
     game.load.image('background', 'assets/michel-galaup.jpg');
+    game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
+    game.load.image('caissesprite', 'assets/star.png');
 }
 
 
@@ -31,37 +33,52 @@ d: plateforme doublesaut
 */
 
 var map = [
-'                                                      1',
-'                                           111111111111',
-' 11                                        9999       1',
-'                             11tt11tt1111111111       1',
-'                                                      1',
-'   111   11111  111tt1111111                          1',
-'                        1                           111',
-'                      1                               1',
-'       11 111111111111111111111111111    11881111111191',
-'   dd     1                              1     1    191',
-'          1                1             1     1   0191',
-'          1  11            1             1    11   1191',
-'     11   1                9             1     1   1191',
-'          9           a1111111111111     1     1   1191',
-' 111      1111111111111                  1      7  1191',
-'      11                                 1      7 61191',
-'                                         11111111111191',
-'  ddd                      1881111111                 1',
-'         11           11   1        1                 1',
-'                           1        1                 1',
-'    111                    9        1                 1',
-'                111188111111111111111                 1',
-'                1           1                         1',
-'   118811111111 111881a1a1111                         1',
-'   1          1                                       1',
-'   1          1                                       1',
-'1  118811111111       11111111                        1',
-'    1    1                                            1',
-'    9    1                                            1',
-'111111111111111111tttt111111ttt11111111111111ttt111111',
+'                                                      r',
+'                                           gggggggggggn',
+' gg                                        9999       r',
+'                             ggttggttgggggggggg       r',
+'                                                      r',
+'   ggg   ggggg  gggttggggggg                          r',
+'                        m                           ggm',
+'                      m                               r',
+'       gg wgggggggggggggggggggggggggg    wg88gggggggn9r',
+'   dd     l                              l     m    r9r',
+'          l                m             l     m   0r9r',
+'          l  gg            m             l    gm   mr9r',
+'     gg   l                9             l     m   mr9r',
+'          9           abbbbbbbbbbbbb     l     m   mr9r',
+' ggg      sbbbbbbbbbbbb                  l         mr9r',
+'      gg                                 l      7 6mr9r',
+'                                         sbbbbbbbbbbe9r',
+'  ddd                      w88111111n                 r',
+'         gg           gg   l        r                 r',
+'                           l        r                 r',
+'    ggg                    9        r                 r',
+'                wggg88gggggmmbbbbbbbe                 r',
+'                l           r                         r',
+'   wg88gggggggn sbb88bababbbe                         r',
+'   l          r                                       r',
+'   l          r                                       r',
+'g  sb88bbbbbbbe       gggggggg                        r',
+'    l    r                                            r',
+'    9    r                                            r',
+'ggggggggggggggggggttttggggggtttggggggggggggggtttggggggg',
 ];
+
+var dictiowall = {
+    'g':4,
+    'n':0,
+    's':2,
+    'e':1,
+    'w':3,
+    'l':7,
+    'r':5,
+    'b':6,
+    'm':8,
+    't':10,
+    'a':11,
+    'd':12,
+};
 
 //==Joueur et caractéristiques==
 var player;
@@ -74,8 +91,10 @@ var JUMPSPEED = 300;
 var DOUBLEJUMPSPEED = 150;
 //Flame :
 var FLAME = true;
+
 //Double saut :
 var JUMPS = 2;
+var doublejumpok=true;
 //Taille
 var SIZE = 2;
 //Vie
@@ -99,26 +118,23 @@ var npcDoubleJump;
 var npcSize;
 var npcTab = [giveSuperForce, giveArmor, giveFlame, giveDoubleJump, giveSize];
 
-var dictionnaire = {
-    1:1,
-    2:2,
-    3:3,
-    4:4,
-    5:5,
-    6:6,
-    7:7,
-    8:8,
-    9:9,
-    0:0,
-    't':10,
-    'a':11,
-    'd':12,
-};
+var breakablegroup;
+var breakable;
+
+var caissegroup;
+var caisse;
+
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'background');
+
+    breakablegroup=game.add.group();
+    breakablegroup.enableBody = true;
+
+    caissegroup=game.add.group();
+    caissegroup.enableBody=true;
 
 	platforms = game.add.group();
 	platforms.enableBody = true;
@@ -171,6 +187,7 @@ function update() {
     game.physics.arcade.collide(ennemygroup, platforms);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
+    game.physics.arcade.collide(player, breakablegroup, checkifbroken, null, this);
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
@@ -237,9 +254,23 @@ function createMap(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] != ' '){
-                var ground = platforms.create(j*64, i*64, 'testsprite');
-                ground.body.immovable = true;
-                ground.frame=dictionnaire[map[i][j]];
+                if(map[i][j]==8){
+                 var breakable=breakablegroup.create(j*64,i*64,'testsprite');
+                breakable.body.immovable=true;
+                breakable.frame=dictiowall[8];
+
+                }
+                else if(map[i][j]==7){
+                 var breakable=breakablegroup.create(j*64,i*64,'caissesprite');
+                breakable.body.immovable=true;
+
+                }
+                else{
+                        var ground=platforms.create(j*64, i*64, 'spritewall');
+                        ground.body.immovable = true;
+                        ground.frame=dictiowall[map[i][j]];
+                
+            }
             }
 
         }
@@ -249,6 +280,7 @@ function createMap(){
 //==Fonction de don de capacité==
 function giveSuperForce(){
     MIGHT = 1;
+    caissegroup.body.immovable=true;
 }
 
 function giveArmor(){
@@ -290,4 +322,11 @@ function loseLife(){
 
 function destroybullet(bullet,platform){
     bullet.kill();
+}
+
+function checkifbroken(player,platform){
+
+    if (doublejumpok==false){
+        platform.kill();
+    }
 }
