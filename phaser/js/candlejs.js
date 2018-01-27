@@ -49,7 +49,6 @@ d: plateforme doublesaut
 */
 
 var map = [
-<<<<<<< HEAD
 '                                                      r',
 '                                                      r',
 '                                                      r',
@@ -58,13 +57,6 @@ var map = [
 ' gg                                        9999       r',
 '           3          aa     ggttggttgggggggggg       r',
 '   ggg   ggggg  gggttggggggg                          r',
-=======
-'                                                    2 r',
-'                                           qggggggggggr',
-' qk                                        9999       r',
-'           3          aa     qgttggttgggggggggk       r',
-'   qgk   qgggk  qggttggggggk                          r',
->>>>>>> 36012a2a613156ddbd50875a402b0a8e9d8ded1a
 '                        m                           ggm',
 '      d               m                               r',
 '          wgggggggggggggggggggggggggk    wg88gggggggn9r',
