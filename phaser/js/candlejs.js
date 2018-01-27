@@ -55,6 +55,7 @@ var map = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 ];
+var weapon;
 var player;
 //Puissance d'attaque :
 var MIGHT = 3;
@@ -77,6 +78,7 @@ var cursors;
 
 var ennemygroup;
 var ennemy;
+var fireButton;
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -97,18 +99,35 @@ function create() {
     this.jumping = false;
     game.camera.follow(player);
 
+<<<<<<< HEAD
     ennemygroup = game.add.group();
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
+=======
+    ennemygroup=game.add.group();
+    ennemygroup.enableBody=true;
+    ennemygroup.physicsBodyType= Phaser.Physics.ARCADE;
+>>>>>>> 590654a15b7235a7e062f1575d0739788e9ddddf
+
+    weapon = game.add.weapon(30, 'bullet');
+    weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
+    weapon.bulletSpeed = 300;
+    weapon.fireRate = 500;
+    game.physics.arcade.enable(weapon.bullets);
+
+    weapon.trackSprite(player, 0, 0, true);
+
 
     this.jumping = false;
     game.camera.follow(player);
 
+    fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
     cursors = game.input.keyboard.createCursorKeys();
 }
 
 function update() {
 	game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
 
 	player.body.velocity.x = 0;
@@ -127,6 +146,21 @@ function update() {
         player.animations.stop();
         player.frame = 4;
     }
+    if (fireButton.isDown)
+    {
+        if(cursors.right.isDown){
+            weapon.fire();
+        }
+        if(cursors.left.isDown){
+            
+            weapon.fireAtXY(player.x-1,player.y);
+        }
+        else{
+            weapon.fire();
+        }
+        
+    }
+
 
     var onTheGround = player.body.touching.down;
     if (onTheGround) {
@@ -187,5 +221,13 @@ function createFoe(x,y){
 }
 
 function loseLife(){
+<<<<<<< HEAD
     LIFE--;
+=======
+    life--;
+}
+
+function destroybullet(bullet,platform){
+    bullet.kill();
+>>>>>>> 590654a15b7235a7e062f1575d0739788e9ddddf
 }
