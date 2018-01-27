@@ -208,6 +208,8 @@ function update() {
     game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
 
 
+    key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+    key1.onDown.add(platforme, this);
     //==Déplacements==
 	player.body.velocity.x = 0;
     if (cursors.left.isDown)
@@ -285,9 +287,13 @@ function createMap(){
                     npc.body.immovable=true;
                 }
                 else if(map[i][j]=='t'){
-                spike=spikegroup.create(j*64,i*64,'spikesprite');
-                spike.body.immovable=true;
+                    spike=spikegroup.create(j*64,i*64,'spikesprite');
+                    spike.body.immovable=true;
 
+                }
+                else if(map[i][j]=='d'){
+                    
+                    console.log("d");
                 }
                 else{
                         var ground=platforms.create(j*64, i*64, 'spritewall');
@@ -352,5 +358,17 @@ function checkifbroken(player,platform){
 
     if (doublejumpok==false){
         platform.kill();
+    }
+}
+
+function platforme(){
+    for (var i=0; i<map.length; i++){
+        for (var j=0; j<map[i].length; j++){
+            if(map[i][j]=='d'){
+                var ground=platforms.create(j*64, i*64, 'spritewall');
+                ground.body.immovable = true;
+                ground.frame=dictiowall[map[i][j]];
+            }
+        }
     }
 }
