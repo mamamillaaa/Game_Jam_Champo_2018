@@ -11,6 +11,8 @@ function preload() {
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamong.png');
+
+    game.load.image('candleguy', 'assets/candleguy.png');
 }
 
 
@@ -34,35 +36,43 @@ d: plateforme doublesaut
 */
 
 var map = [
-'                                                      r',
+'                                                    2 r',
 '                                           gggggggggggn',
 ' gg                                        9999       r',
 '                             ggttggttgggggggggg       r',
-'           p                                          r',
+'           3                                          r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
 '      d               m                               r',
 '          wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '         dl                              l     m    r9r',
-'    ggg   l  p             m             l     m   0r9r',
-'          l  gg            m             l    gm   mr9r',
+'    ggg   l   1            m             l     m   0r9r',
+'          l  ggg           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
 '  gggg    sbbbbbbbbbbbb                  l         mr9r',
 '                                         l      7 6mr9r',
 '       d                                 sbbbbbbbbbbe9r',
+<<<<<<< HEAD
 '      g                    w88111111n                 r',
 ' g d  g  g            gg   l        r                 r',
 '      g                   dl        r                 r',
 '                           9        r                 r',
 '   g     g      wggg88gggggmmbbbbbbbe                 r',
+=======
+'         gg                w88111111n                 r',
+'   d                  gg   l        r                 r',
+'                          dl        r                 r',
+'    ggg                    9     0  r                 r',
+'          d     wggg88gggggmmbbbbbbbe                 r',
+>>>>>>> 08c81746af4751b8fb95ffc372eaae4403f513fa
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 '  dl          r                                       r',
 '   l          r                                       r',
 'g  sb88bbbbbbbe                                       r',
 ' d  l    r            gggggggg                        r',
-'    9 p  r                                            r',
+'    9 4  r                                            r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
 ];
 
@@ -79,6 +89,14 @@ var dictiowall = {
     't':10,
     'a':11,
     'd':12,
+};
+
+var dictioNPC = {
+    0 : 'npcSuperForce',
+    1 : 'npcArmor',
+    2 : 'npcFlame',
+    3 : 'npcDoubleJump',
+    4 : 'npcSize'
 };
 
 //==Joueur et caractéristiques==
@@ -152,8 +170,8 @@ function create() {
 
     createMap();
 
-	player = game.add.sprite(100, 1750, 'dudebougie');
-    player.scale.setTo(0.20,0.20);
+	player = game.add.sprite(100, 1750, 'candleguy');
+    //player.scale.setTo(0.02,0.02);
 	game.physics.arcade.enable(player);
 	player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
@@ -171,11 +189,11 @@ function create() {
     /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
 
 
-    ennemy=ennemygroup.create(200, 1800, 'bougie');
+    /*ennemy=ennemygroup.create(200, 1800, 'bougie');
     ennemy.scale.setTo(0.25,0.25);
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
-    ennemy.body.collideWorldBounds = true;
+    ennemy.body.collideWorldBounds = true;*/
 
     weapon = game.add.weapon(30, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -215,12 +233,12 @@ function update() {
     if (cursors.left.isDown)
     {
         player.body.velocity.x = -SPEED;
-        player.animations.play('left');
+        //player.animations.play('left');
     }
     else if (cursors.right.isDown)
     {
         player.body.velocity.x = SPEED;
-        player.animations.play('right');
+        //player.animations.play('right');
     }
     else
     {
@@ -263,29 +281,23 @@ function update() {
 }
 
 //==Création de la TileMap==
-
 function createMap(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] != ' '){
-                if(map[i][j]==8){
-                 var breakable=breakablegroup.create(j*64,i*64,'testsprite');
-                breakable.body.immovable=true;
-                breakable.frame=dictiowall[8];
-
+                if (map[i][j]==8){
+                    var breakable=breakablegroup.create(j*64,i*64,'testsprite');
+                    breakable.body.immovable=true;
+                    breakable.frame=dictiowall[8];
                 }
-                else if(map[i][j]==7){
-                caisse=caissegroup.create(j*64,i*64,'caissesprite');
-                
-
+                else if (map[i][j]==7){
+                    caisse=caissegroup.create(j*64,i*64,'caissesprite');
                 }
-                else if(map[i][j]=='p'){
-                    var npc=npcgroup.create(j*64,i*64,'bougie');
-                    npc.scale.setTo(0.25,0.25);
-                    npc.body.bounce.y = 0.2;
-                    npc.body.gravity.y = 300;
-                    npc.body.immovable=true;
+                else if (map[i][j]=='t'){
+                    spike=spikegroup.create(j*64,i*64,'spikesprite');
+                    spike.body.immovable=true;
                 }
+<<<<<<< HEAD
                 else if(map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
@@ -301,24 +313,62 @@ function createMap(){
                         ground.frame=dictiowall[map[i][j]];
                 
             }
+=======
+                else if (map[i][j] in dictiowall){
+                    var ground=platforms.create(j*64, i*64, 'spritewall');
+                    ground.body.immovable = true;
+                    ground.frame=dictiowall[map[i][j]];
+                }
+>>>>>>> 08c81746af4751b8fb95ffc372eaae4403f513fa
             }
+        }
+    }
+    placeNPC();
+}
 
+//==Placement de NPCs==
+function placeNPC(){
+    for (var i=0; i<map.length; i++){
+        for (var j=0; j<map[i].length; j++){
+            if (map[i][j] == '0'){
+                npcSuperForce = npcgroup.create(j*64,i*64,'candleguy');
+                //npcSuperForce.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '1'){
+                npcArmor = npcgroup.create(j*64,i*64,'candleguy');
+                //npcArmor.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '2'){
+                npcFlame = npcgroup.create(j*64,i*64,'candleguy');
+                //npcFlame.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '3'){
+                npcDoubleJump = npcgroup.create(j*64,i*64,'candleguy');
+                //npcDoubleJump.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '4'){
+                npcSize = npcgroup.create(j*64,i*64,'candleguy');
+                //npcSize.scale.setTo(0.25,0.25);
+            }
         }
     }
 }
 
 //==Fonction de don de capacité==
 function giveSuperForce(){
+    console.log('give super force');
     MIGHT = 1;
     caissegroup.body.immovable=true;
 }
 
 function giveArmor(){
+    console.log('give armor');
     ARMOR = false;
     SPEED = 200;
 }
 
 function giveFlame(){
+    console.log('give flame');
     FLAME = false;
 }
 
@@ -328,6 +378,7 @@ function giveDoubleJump(){
 }
 
 function giveSize(){
+    console.log('give size');
     SIZE = 1;
 }
 
