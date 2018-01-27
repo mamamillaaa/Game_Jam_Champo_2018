@@ -1,18 +1,24 @@
 var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update });
 
+
 function preload() {
+    
+    
 	game.load.image('ground', 'assets/platform_01.png');
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('dudebougie', 'assets/dudebougie.png', 283, 247);
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
     game.load.image('bullet', 'assets/flamme.png');
-    game.load.image('background', 'assets/michel-galaup.jpg');
+    game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamond.png');
 
     game.load.image('candleguy', 'assets/candleguy.png');
+    game.load.spritesheet('npc', 'assets/npc.png', 32, 64);
+    game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
+
 }
 
 
@@ -39,33 +45,33 @@ var map = [
 '                                                    2 r',
 '                                           gggggggggggn',
 ' gg                                        9999       r',
-'                             ggttggttgggggggggg       r',
-'           3                                          r',
+'           3          aa     ggttggttgggggggggg       r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
 '      d               m                               r',
 '          wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '         dl                              l     m    r9r',
-'    ggg   l   1            m             l     m   0r9r',
-'          l  ggg           m             l    gm   mr9r',
+'          l   1            m             l     m   0r9r',
+'      gg  l  ggg           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
-'  gggg    sbbbbbbbbbbbb                  l         mr9r',
+' ggg      sbbbbbbbbbbbb                  l         mr9r',
 '                                         l      7 6mr9r',
-'       d                                 sbbbbbbbbbbe9r',
-'         gg                w88 gggggn                 r',
-'   d                  gg   l        r                 r',
-'                          dl        r                 r',
-'    ggg                    9     0  r                 r',
-'          d     wggg88gggggmmbbbbbbbe                 r',
+'      gg                                 sbbbbbbbbbbe9r',
+'                           w88ggggggn                 r',
+'         d            gg   l        r                 r',
+'   ddd    gg              dl        r                 r',
+'                           9     0  r                 r',
+'    ggg         wggg88gggggmmbbbbbbbe                 r',
+'          d     l           r                         r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
-'  dl          r                                       r',
+'dddl          r                                       r',
 '   l          r                                       r',
 'g  sb88bbbbbbbe                                       r',
-' d  l    r            gggggggg                        r',
-'    9 4  r                                            r',
-'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
+'    l    7            gggggggg                        r',
+'    9 4  7                                            r',
+'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggm',
 ];
 
 var dictiowall = {
@@ -81,14 +87,6 @@ var dictiowall = {
     't':10,
     'a':11,
     'd':12,
-};
-
-var dictioNPC = {
-    0 : 'npcSuperForce',
-    1 : 'npcArmor',
-    2 : 'npcFlame',
-    3 : 'npcDoubleJump',
-    4 : 'npcSize'
 };
 
 //==Joueur et caractéristiques==
@@ -140,6 +138,10 @@ var spike;
 
 
 function create() {
+    
+    
+       
+
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'background');
@@ -154,11 +156,11 @@ function create() {
 	platforms.enableBody = true;
     game.world.setBounds(0, 0, 4000, map.width*64);
 
-    npcgroup = game.add.group();
-    npcgroup.enableBody = true;
-
     spikegroup=game.add.group();
     spikegroup.enableBody=true;
+
+    npcgroup = game.add.group();
+    npcgroup.enableBody = true;
 
     createMap();
 
@@ -177,10 +179,6 @@ function create() {
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
 
-
-    /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
-
-
     /*ennemy=ennemygroup.create(200, 1800, 'bougie');
     ennemy.scale.setTo(0.25,0.25);
     ennemy.body.bounce.y = 0.2;
@@ -198,12 +196,26 @@ function create() {
     //==Controles==
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    
+    
+    
+    shadowTexture = game.add.bitmapData(game.width, game.height);    
+    // Create an object that will use the bitmap as a texture    
+    lightSprite = game.add.image(game.camera.x, game.camera.y, shadowTexture);    
+    // Set the blend mode to MULTIPLY. This will darken the colors of    
+    // everything below this sprite.    
+    lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 }
 
 function update() {
+    //==Lumiere==
+    lightSprite.reset(game.camera.x, game.camera.y);    
+    updateShadowTexture();
     //==Physique==
 	game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(caissegroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
+    game.physics.arcade.collide(caissegroup, caissegroup);
     game.physics.arcade.collide(ennemygroup, platforms);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
@@ -270,6 +282,9 @@ function update() {
         this.jumps--;
         this.jumping = false;
     }
+    
+    lightSprite.reset(game.camera.x, game.camera.y);    
+    updateShadowTexture();
 }
 
 //==Création de la TileMap==
@@ -284,6 +299,7 @@ function createMap(){
                 }
                 else if (map[i][j]==7){
                     caisse=caissegroup.create(j*64,i*64,'caissesprite');
+                    caisse.body.gravity.y = 300;
                 }
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
@@ -311,24 +327,24 @@ function placeNPC(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] == '0'){
-                npcSuperForce = npcgroup.create(j*64,i*64,'candleguy');
-                //npcSuperForce.scale.setTo(0.25,0.25);
+                npcSuperForce = npcgroup.create(j*64,i*64,'npc');
+                npcSuperForce.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '1'){
-                npcArmor = npcgroup.create(j*64,i*64,'candleguy');
-                //npcArmor.scale.setTo(0.25,0.25);
+                npcArmor = npcgroup.create(j*64,i*64,'npc');
+                npcArmor.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '2'){
-                npcFlame = npcgroup.create(j*64,i*64,'candleguy');
-                //npcFlame.scale.setTo(0.25,0.25);
+                npcFlame = npcgroup.create(j*64,i*64,'npc');
+                npcFlame.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '3'){
-                npcDoubleJump = npcgroup.create(j*64,i*64,'candleguy');
-                //npcDoubleJump.scale.setTo(0.25,0.25);
+                npcDoubleJump = npcgroup.create(j*64,i*64,'npc');
+                npcDoubleJump.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '4'){
-                npcSize = npcgroup.create(j*64,i*64,'candleguy');
-                //npcSize.scale.setTo(0.25,0.25);
+                npcSize = npcgroup.create(j*64,i*64,'npc');
+                npcSize.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
         }
     }
@@ -337,33 +353,37 @@ function placeNPC(){
 //==Fonction de don de capacité==
 function giveSuperForce(){
     console.log('give super force');
+    npcSuperForce.animations.play('giveAbility');
     MIGHT = 1;
     //caissegroup.body.immovable=true;
 }
 
 function giveArmor(){
     console.log('give armor');
+    npcArmor.animations.play('giveAbility');
     ARMOR = false;
     SPEED = 200;
 }
 
 function giveFlame(){
     console.log('give flame');
+    npcFlame.animations.play('giveAbility');
     FLAME = false;
 }
 
 function giveDoubleJump(){
     console.log('give double jump');
+    npcDoubleJump.animations.play('giveAbility');
     JUMPS = 1;
 }
 
 function giveSize(){
     console.log('give size');
+    npcSize.animations.play('giveAbility');
     SIZE = 1;
 }
 
 //==Création d'ennemis (à partir d'une position)
-
 function createFoe(x,y){
     ennemy=ennemygroup.create(x*64,y*64,'ennemy');
     ennemy.enableBody=true;
@@ -374,19 +394,16 @@ function createFoe(x,y){
 }
 
 //==Perte de vie==
-
 function loseLife(){
     LIFE--;
 }
 
 //==Destruction des flames==
-
 function destroybullet(bullet,platform){
     bullet.kill();
 }
 
 function checkifbroken(player,platform){
-
     if (doublejumpok==false){
         platform.kill();
     }
@@ -403,4 +420,25 @@ function platforme(){
             }
         }
     }
+}
+
+function updateShadowTexture(){    
+        // Draw shadow    
+        console.log ("test");
+        shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
+        shadowTexture.context.fillRect(0, 0, game.width, game.height);    
+        var radius = 100 + game.rnd.integerInRange(1,10);
+        var heroX = player.x - game.camera.x;       
+        var heroY = player.y - game.camera.y;       
+        // Draw circle of light with a soft edge    
+        var gradient = shadowTexture.context.createRadialGradient(heroX, heroY, 100 * 0.75, heroX, heroY, radius);
+        gradient.addColorStop(0, "rgba(255, 255, 255, 1.0)");    
+        gradient.addColorStop(1, "rgba(255, 255, 255, 0.0)");    
+        shadowTexture.context.beginPath();    
+        shadowTexture.context.fillStyle = gradient;    
+        shadowTexture.context.arc(heroX, heroY, radius, 0, Math.PI*2, false);   
+        shadowTexture.context.fill();    
+        // This just tells the engine it should update the texture cache    
+        shadowTexture.dirty = true;
+        
 }
