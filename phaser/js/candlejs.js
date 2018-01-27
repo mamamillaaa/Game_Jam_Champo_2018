@@ -69,8 +69,8 @@ var FLAME = true;
 var JUMPS = 2;
 //Taille
 var SIZE = 2;
-
-var life = 10;
+//Vie
+var LIFE = 10;
 
 var platforms;
 var cursors;
@@ -97,8 +97,9 @@ function create() {
     this.jumping = false;
     game.camera.follow(player);
 
-    ennemygroup.enableBody=true;
-    ennemygroup.physicsBodyType= Phaser.Physics.ARCADE;
+    ennemygroup = game.add.group();
+    ennemygroup.enableBody = true;
+    ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
 
     this.jumping = false;
     game.camera.follow(player);
@@ -109,6 +110,7 @@ function create() {
 function update() {
 	game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
+
 	player.body.velocity.x = 0;
     if (cursors.left.isDown)
     {
@@ -171,6 +173,7 @@ function giveFlame(){
 }
 
 function giveDoubleJump(){
+    console.log('give double jump');
     JUMPS = 1;
 }
 
@@ -179,11 +182,10 @@ function giveSize(){
 }
 
 function createFoe(x,y){
-
     ennemy=ennemygroup.create(x*64,y*64,'ennemy');
     ennemy.enableBody=true;
 }
 
 function loseLife(){
-    life--;
+    LIFE--;
 }
