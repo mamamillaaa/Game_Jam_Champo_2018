@@ -1,8 +1,8 @@
 var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update });
 
 function preload() {
-	game.load.image('ground', 'assets/platform_01.png');
-	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.image('ground', 'assets/platform_01.png');
+    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('dudebougie', 'assets/dudebougie.png', 283, 247);
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
@@ -35,7 +35,6 @@ a: piques
 b: porte 
 d: plateforme doublesaut
 0: end
-
 */
 
 var map = [
@@ -97,7 +96,6 @@ var JUMPSPEED = 300;
 var DOUBLEJUMPSPEED = 150;
 //Flame :
 var FLAME = true;
-
 //Double saut :
 var JUMPS = 2;
 var doublejumpok=true;
@@ -135,18 +133,18 @@ var spike;
 
 
 function create() {
-	game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'background');
 
     breakablegroup=game.add.group();
     breakablegroup.enableBody = true;
 
-    caissegroup=game.add.group();
-    caissegroup.enableBody=true;
+    caissegroup = game.add.group();
+    caissegroup.enableBody = true;
 
-	platforms = game.add.group();
-	platforms.enableBody = true;
+    platforms = game.add.group();
+    platforms.enableBody = true;
     game.world.setBounds(0, 0, 4000, map.width*64);
 
     spikegroup=game.add.group();
@@ -157,13 +155,12 @@ function create() {
 
     createMap();
 
-	player = game.add.sprite(100, 1750, 'candleguy');
-    //player.scale.setTo(0.02,0.02);
-	game.physics.arcade.enable(player);
-	player.body.bounce.y = 0.2;
+    player = game.add.sprite(100, 1750, 'candleguy');
+    game.physics.arcade.enable(player);
+    player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
-	player.animations.add('left', [2, 3], 10, true);
+    player.animations.add('left', [2, 3], 10, true);
     player.animations.add('right', [0, 1], 10, true);
     this.jumping = false;
     game.camera.follow(player);
@@ -193,7 +190,7 @@ function create() {
 
 function update() {
     //==Physique==
-	game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(player, platforms);
     game.physics.arcade.collide(caissegroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
     game.physics.arcade.collide(caissegroup, caissegroup);
@@ -212,7 +209,7 @@ function update() {
 
 
     //==Déplacements==
-	player.body.velocity.x = 0;
+    player.body.velocity.x = 0;
     if (cursors.left.isDown)
     {
         player.body.velocity.x = -SPEED;
@@ -281,7 +278,7 @@ function createMap(){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
                 }
-                else if (map[i][j] in dictiowall){
+                else if (map[i][j] in dictiowall && map[i][j] != 'd'){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
                     ground.body.immovable = true;
                     ground.frame=dictiowall[map[i][j]];
@@ -292,28 +289,45 @@ function createMap(){
     placeNPC();
 }
 
+function placeMoreGround(){
+    for (var i=0; i<map.length; i++){
+        for (var j=0; j<map[i].length; j++){
+            if (map[i][j] == 'd'){
+                var ground=platforms.create(j*64, i*64, 'spritewall');
+                ground.body.immovable = true;
+                ground.frame=dictiowall[map[i][j]];
+            }
+        }
+    }
+}
+
 //==Placement de NPCs==
 function placeNPC(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] == '0'){
                 npcSuperForce = npcgroup.create(j*64,i*64,'npc');
+                npcSuperForce.anchor.y -= 0.075;
                 npcSuperForce.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '1'){
                 npcArmor = npcgroup.create(j*64,i*64,'npc');
+                npcArmor.anchor.y -= 0.075;
                 npcArmor.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '2'){
                 npcFlame = npcgroup.create(j*64,i*64,'npc');
+                npcFlame.anchor.y -= 0.075;
                 npcFlame.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '3'){
                 npcDoubleJump = npcgroup.create(j*64,i*64,'npc');
+                npcDoubleJump.anchor.y -= 0.075;
                 npcDoubleJump.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
             if (map[i][j] == '4'){
                 npcSize = npcgroup.create(j*64,i*64,'npc');
+                npcSize.anchor.y -= 0.075;
                 npcSize.animations.add('giveAbility', [1, 2, 3, 4], 2, false);
             }
         }
@@ -345,6 +359,9 @@ function giveDoubleJump(){
     console.log('give double jump');
     npcDoubleJump.animations.play('giveAbility');
     JUMPS = 1;
+    DOUBLEJUMPSPEED = 300;
+    doublejumpok = false;
+    placeMoreGround();
 }
 
 function giveSize(){
@@ -375,7 +392,10 @@ function destroybullet(bullet,platform){
 }
 
 function checkifbroken(player,platform){
-    if (doublejumpok==false){
+    console.log('on breakable');
+    console.log(doublejumpok);
+    if (!doublejumpok){
+        console.log('beak !');
         platform.kill();
     }
 }
