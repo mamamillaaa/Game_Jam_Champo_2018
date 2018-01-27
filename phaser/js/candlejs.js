@@ -13,6 +13,7 @@ function preload() {
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
     game.load.image('cratesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamond.png');
+
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
@@ -22,6 +23,7 @@ function preload() {
     game.load.spritesheet('npcSize', 'assets/npcSize.png', 32, 64);
     game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
+    game.load.image('crate', 'assets/crate.png');
 
 }
 
@@ -45,9 +47,9 @@ d: plateforme doublesaut
 */
 
 var map = [
-'                                                    2 r',
-'                                                    2 r',
-'                                                    2 r',
+'                                                      r',
+'                                                      r',
+'                                                      r',
 '                                                    2 r',
 '                                           gggggggggggn',
 ' gg                                        9999       r',
@@ -237,64 +239,71 @@ function update() {
     player.body.velocity.x = 0;
 
     //==Déplacements==
-    if (cursors.left.isDown){
-        player.body.velocity.x = -SPEED;
-        player.animations.play('left');
-    }
-    else if (cursors.right.isDown){
-        player.body.velocity.x = SPEED;
-        player.animations.play('right');
-    }
-    else{
-        player.animations.stop();
-        player.frame = 0;
-    }
-    if (fireButton.isDown){
-        if(cursors.right.isDown){
-            //player.animations.play('attack_right');
-            player.frame = 7;
-            if (FLAME){
-                weapon.fire();
-            }
-        }
-        if(cursors.left.isDown){
-            //player.animations.play('attack_left');
-            player.frame = 8;
-            if (FLAME){
-                weapon.fireAtXY(player.x-1,player.y);
-
-            }
-        }
-        else{
-            player.animations.play('attack_right');
-            if (FLAME){
-                weapon.fire();
-            }
-        }
-    }
-
-    //==Saut / Double saut==
     var onTheGround = player.body.touching.down;
-    if (onTheGround) {
+
+    if (onTheGround){
         this.jumps = JUMPS;
         this.jumping = false;
+        if (cursors.left.isDown){
+            player.body.velocity.x = -SPEED;
+            player.animations.play('left');
+        }
+        else if (cursors.right.isDown){
+            player.body.velocity.x = SPEED;
+            player.animations.play('right');
+        }
+        else {
+            player.animations.stop();
+            player.frame = 0;
+        }
+        if (fireButton.isDown){
+            if(cursors.right.isDown){
+                player.frame = 7;
+                if (FLAME){
+                    weapon.fire();
+                }
+            }
+            if(cursors.left.isDown){
+                player.frame = 8;
+                if (FLAME){
+                    weapon.fireAtXY(player.x-1,player.y);
+
+                }
+            }
+            else{
+                player.animations.play('attack_right');
+                if (FLAME){
+                    weapon.fire();
+                }
+            }
+        }
+        if (this.jumps == 2 && cursors.up.isDown && cursors.up.duration < 200) {
+            player.body.velocity.y = -JUMPSPEED;
+            this.jumping = true;
+            player.frame = 6;
+        }
     }
-    if (this.jumps == 2 && cursors.up.isDown && cursors.up.duration < 200 && onTheGround) {
-        player.body.velocity.y = -JUMPSPEED;
-        this.jumping = true;
-        player.frame = 6;
-    }
-    if (this.jumps == 1 && cursors.up.isDown && cursors.up.duration < 200) {
-        player.body.velocity.y = -DOUBLEJUMPSPEED;
-        this.jumping = true;
-        player.frame = 6;
-    }
-    if (this.jumping && cursors.up.isUp) {
-        this.jumps--;
-        this.jumping = false;
-    }
+    //==Saut / Double saut==
+    else {
+        if (cursors.left.isDown){
+            player.body.velocity.x = -SPEED;
+        }
+        if (cursors.right.isDown){
+            player.body.velocity.x = SPEED;
+        }
+        if (this.jumps == 1 && cursors.up.isDown && cursors.up.duration < 200) {
+            player.body.velocity.y = -DOUBLEJUMPSPEED;
+            this.jumping = true;
+            player.frame = 6;
+        }
+        if (this.jumping && cursors.up.isUp) {
+            this.jumps--;
+            this.jumping = false;
+            player.frame = 5;
+        }
     
     lightSprite.reset(game.camera.x, game.camera.y);
+    }
 }
 
 //==Création de la TileMap==
@@ -308,7 +317,7 @@ function createMap(){
                     breakable.frame=dictiowall[8];
                 }
                 else if (map[i][j]==7){
-                    crate=crategroup.create(j*64,i*64,'cratesprite');
+                    crate=crategroup.create(j*64,i*64,'crate');
                     crate.body.gravity.y = 300;
                 }
                 else if (map[i][j]=='t'){
