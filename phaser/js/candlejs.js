@@ -51,11 +51,11 @@ var map = [
 '  gggg    sbbbbbbbbbbbb                  l         mr9r',
 '                                         l      7 6mr9r',
 '       d                                 sbbbbbbbbbbe9r',
-'         gg                w88111111n                 r',
-'   d                  gg   l        r                 r',
-'                          dl        r                 r',
-'    ggg                    9        r                 r',
-'          d     wggg88gggggmmbbbbbbbe                 r',
+'      g                    w88111111n                 r',
+' g d  g  g            gg   l        r                 r',
+'      g                   dl        r                 r',
+'                           9        r                 r',
+'   g     g      wggg88gggggmmbbbbbbbe                 r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 '  dl          r                                       r',
@@ -362,6 +362,7 @@ function checkifbroken(player,platform){
 }
 
 function platforme(){
+    //jumps == 2
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if(map[i][j]=='d'){
