@@ -7,6 +7,7 @@ function preload() {
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
     game.load.image('bullet', 'assets/flamme.png');
+    game.load.image('background', 'assets/michel-galaup.jpg');
 }
 
 
@@ -116,6 +117,8 @@ var dictionnaire = {
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    game.add.sprite(0, 0, 'background');
 
 	platforms = game.add.group();
 	platforms.enableBody = true;
