@@ -41,37 +41,30 @@ var map = [
 '           p                                          r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
-<<<<<<< HEAD
 '                      m                               r',
 '       gg wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '   dd     l                              l     m    r9r',
 '          l  p             m             l     m   0r9r',
-=======
->>>>>>> 4d3fb85596db8a862744103731dd8efe930308fe
 '          l  gg            m             l    gm   mr9r',
-'     gg   l                9             l     m   mr9r',
+' d        l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
-' ggg      sbbbbbbbbbbbb                  l         mr9r',
-'      gg                                 l      7 6mr9r',
-'                                         sbbbbbbbbbbe9r',
-'  ddd                      w88111111n                 r',
-'         gg           gg   l        r                 r',
-'                           l        r                 r',
-'    ggg                    9     p  r                 r',
-'                wggg88gggggmmbbbbbbbe                 r',
-=======
->>>>>>> 4d3fb85596db8a862744103731dd8efe930308fe
+'  gggg    sbbbbbbbbbbbb                  l         mr9r',
+'                                         l      7 6mr9r',
+'       d                                 sbbbbbbbbbbe9r',
+'         gg                w88111111n                 r',
+'   d                  gg   l        r                 r',
+'                          dl        r                 r',
+'    ggg                    9        r                 r',
+'          d     wggg88gggggmmbbbbbbbe                 r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
+'  dl          r                                       r',
 '   l          r                                       r',
-<<<<<<< HEAD
 '   l          r                                       r',
 'g  sb88bbbbbbbe       gggggggg                        r',
 '    l    r                                            r',
 '    9 p  r                                            r',
 'ggggggggggggggggggttttggggggtttggggggggggggggtttggggggg',
-=======
->>>>>>> 4d3fb85596db8a862744103731dd8efe930308fe
 ];
 
 var dictiowall = {
@@ -95,7 +88,7 @@ var player;
 var MIGHT = 3;
 //Grosse armure et vitesse de déplacement :
 var ARMOR = true;
-var SPEED = 100;
+var SPEED = 150;
 var JUMPSPEED = 300;
 var DOUBLEJUMPSPEED = 150;
 //Flame :
