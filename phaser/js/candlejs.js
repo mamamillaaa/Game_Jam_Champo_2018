@@ -85,21 +85,14 @@ function create() {
 	player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
-
 	player.animations.add('left', [0, 1, 2, 3], 10, true);
     player.animations.add('right', [5, 6, 7, 8], 10, true);
-
-<<<<<<< HEAD
     this.jumping = false;
-=======
     game.camera.follow(player);
->>>>>>> 6ad9b223b8db515028eb2b36cbd576c87f5eef2f
+
+
 
     cursors = game.input.keyboard.createCursorKeys();
-
-       
-
-
 }
 
 function update() {
@@ -121,7 +114,6 @@ function update() {
         player.frame = 4;
     }
 
-        // Set a variable that is true when the player is touching the ground
     var onTheGround = player.body.touching.down;
     if (onTheGround) {
         this.jumps = JUMPS;
@@ -147,4 +139,25 @@ function createMap(){
             }
         }
     }
+}
+
+function giveSuperForce(){
+    MIGHT = 1;
+}
+
+function giveArmor(){
+    ARMOR = false;
+    SPEED = 200;
+}
+
+function giveFlame(){
+    FLAME = false;
+}
+
+function giveDoubleJump(){
+    JUMPS = 1;
+}
+
+function giveSize(){
+    SIZE = 1;
 }
