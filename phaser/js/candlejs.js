@@ -38,13 +38,13 @@ var map = [
 '                                           gggggggggggn',
 ' gg                                        9999       r',
 '                             ggttggttgggggggggg       r',
-'           p                                          r',
+'           3                                          r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
 '                      m                               r',
 '       gg wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '   dd     l                              l     m    r9r',
-'          l  p             m             l     m   0r9r',
+'          l  1             m             l     m   0r9r',
 '          l  gg            m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
@@ -63,7 +63,7 @@ var map = [
 '   l          r                                       r',
 'g  sb88bbbbbbbe       gggggggg                        r',
 '    l    r                                            r',
-'    9 p  r                                            r',
+'    9 4  r                                            r',
 'ggggggggggggggggggttttggggggtttggggggggggggggtttggggggg',
 ];
 
@@ -80,6 +80,14 @@ var dictiowall = {
     't':10,
     'a':11,
     'd':12,
+};
+
+var dictioNPC = {
+    0 : 'npcSuperForce',
+    1 : 'npcArmor',
+    2 : 'npcFlame',
+    3 : 'npcDoubleJump',
+    4 : 'npcSize'
 };
 
 //==Joueur et caractéristiques==
@@ -172,11 +180,11 @@ function create() {
     /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
 
 
-    ennemy=ennemygroup.create(200, 1800, 'bougie');
+    /*ennemy=ennemygroup.create(200, 1800, 'bougie');
     ennemy.scale.setTo(0.25,0.25);
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
-    ennemy.body.collideWorldBounds = true;
+    ennemy.body.collideWorldBounds = true;*/
 
     weapon = game.add.weapon(30, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -262,58 +270,76 @@ function update() {
 }
 
 //==Création de la TileMap==
-
 function createMap(){
     for (var i=0; i<map.length; i++){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] != ' '){
-                if(map[i][j]==8){
-                 var breakable=breakablegroup.create(j*64,i*64,'testsprite');
-                breakable.body.immovable=true;
-                breakable.frame=dictiowall[8];
-
+                if (map[i][j]==8){
+                    var breakable=breakablegroup.create(j*64,i*64,'testsprite');
+                    breakable.body.immovable=true;
+                    breakable.frame=dictiowall[8];
                 }
-                else if(map[i][j]==7){
-                caisse=caissegroup.create(j*64,i*64,'caissesprite');
-                
-
+                else if (map[i][j]==7){
+                    caisse=caissegroup.create(j*64,i*64,'caissesprite');
                 }
-                else if(map[i][j]=='p'){
-                    var npc=npcgroup.create(j*64,i*64,'bougie');
-                    npc.scale.setTo(0.25,0.25);
-                    npc.body.bounce.y = 0.2;
-                    npc.body.gravity.y = 300;
-                    npc.body.immovable=true;
+                else if (map[i][j]=='t'){
+                    spike=spikegroup.create(j*64,i*64,'spikesprite');
+                    spike.body.immovable=true;
                 }
-                else if(map[i][j]=='t'){
-                spike=spikegroup.create(j*64,i*64,'spikesprite');
-                spike.body.immovable=true;
-
+                else if (map[i][j] in dictiowall){
+                    var ground=platforms.create(j*64, i*64, 'spritewall');
+                    ground.body.immovable = true;
+                    ground.frame=dictiowall[map[i][j]];
                 }
-                else{
-                        var ground=platforms.create(j*64, i*64, 'spritewall');
-                        ground.body.immovable = true;
-                        ground.frame=dictiowall[map[i][j]];
-                
             }
-            }
+        }
+    }
+    placeNPC();
+}
 
+//==Placement de NPC==
+function placeNPC(){
+    for (var i=0; i<map.length; i++){
+        for (var j=0; j<map[i].length; j++){
+            if (map[i][j] == '0'){
+                npcSuperForce = npcgroup.create(j*64,i*64,'bougie');
+                npcSuperForce.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '1'){
+                npcArmor = npcgroup.create(j*64,i*64,'bougie');
+                npcArmor.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '2'){
+                npcFlame = npcgroup.create(j*64,i*64,'bougie');
+                npcFlame.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '3'){
+                npcDoubleJump = npcgroup.create(j*64,i*64,'bougie');
+                npcDoubleJump.scale.setTo(0.25,0.25);
+            }
+            if (map[i][j] == '4'){
+                npcSize = npcgroup.create(j*64,i*64,'bougie');
+                npcSize.scale.setTo(0.25,0.25);
+            }
         }
     }
 }
 
 //==Fonction de don de capacité==
 function giveSuperForce(){
+    console.log('give super force');
     MIGHT = 1;
     caissegroup.body.immovable=true;
 }
 
 function giveArmor(){
+    console.log('give armor');
     ARMOR = false;
     SPEED = 200;
 }
 
 function giveFlame(){
+    console.log('give flame');
     FLAME = false;
 }
 
@@ -323,6 +349,7 @@ function giveDoubleJump(){
 }
 
 function giveSize(){
+    console.log('give size');
     SIZE = 1;
 }
 
