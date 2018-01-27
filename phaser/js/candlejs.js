@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update, render: render});
 
 function preload() {
     game.load.image('ground', 'assets/platform_01.png');
@@ -8,12 +8,13 @@ function preload() {
     game.load.image('bougie', 'assets/bougie.png');
     game.load.image('bullet', 'assets/flamme.png');
     game.load.image('background', 'assets/background.png');
-    game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
-    game.load.image('caissesprite', 'assets/star.png');
+    game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
+    game.load.image('cratesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamond.png');
-
     game.load.image('candleguy', 'assets/candleguy.png');
+    game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npc', 'assets/npc.png', 32, 64);
+    game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
 
 }
@@ -27,7 +28,7 @@ Code de la map
 4: ennemi
 5: flamme
 6: rebondissante
-7: caisse
+7: crate
 8: plateforme destructible double saut
 9: trou de petit
 t: trappe
@@ -48,7 +49,7 @@ var map = [
 '      d               m                               r',
 '          wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '         dl                              l     m    r9r',
-'    ggg   l               m             l     m   0r9r',
+'    ggg   l               m             ll     m   0r9r',
 '          l  ggg           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9     1     abbbbbbbbbbbbb     l     m   mr9r',
@@ -63,10 +64,10 @@ var map = [
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 '  dl          r                                       r',
-'   l          r                                       r',
+'   l    7   x r                                       r',
 'g  sb88bbbbbbbe                                       r',
 ' d  l    7            gggggggg                        r',
-'    9 4  7                                            r',
+'    9 4  7      x                                     r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
 ];
 
@@ -100,9 +101,10 @@ var FLAME = true;
 var JUMPS = 2;
 var doublejumpok=true;
 //Taille
-var SIZE = 2;
+var SIZE = 1;
 //Vie
-var LIFE = 10;
+var LIFE = 6;
+var lifeBar;
 //Arme
 var weapon;
 
@@ -125,8 +127,8 @@ var npcTab = [giveSuperForce, giveArmor, giveFlame, giveDoubleJump, giveSize];
 var breakablegroup;
 var breakable;
 
-var caissegroup;
-var caisse;
+var crategroup;
+var crate;
 
 var spikegroup;
 var spike;
@@ -140,8 +142,8 @@ function create() {
     breakablegroup=game.add.group();
     breakablegroup.enableBody = true;
 
-    caissegroup = game.add.group();
-    caissegroup.enableBody = true;
+    crategroup = game.add.group();
+    crategroup.enableBody = true;
 
     platforms = game.add.group();
     platforms.enableBody = true;
@@ -150,13 +152,9 @@ function create() {
     spikegroup=game.add.group();
     spikegroup.enableBody=true;
 
-    npcgroup = game.add.group();
-    npcgroup.enableBody = true;
-
-    createMap();
-
     player = game.add.sprite(100, 1750, 'candleguy');
     game.physics.arcade.enable(player);
+    player.scale.setTo(SIZE, SIZE);
     player.body.bounce.y = 0.2;
     player.body.gravity.y = 300;
     player.body.collideWorldBounds = true;
@@ -164,16 +162,16 @@ function create() {
     player.animations.add('right', [0, 1], 10, true);
     this.jumping = false;
     game.camera.follow(player);
+    //game.worldScale += 0.5
+
+    lifeBar = game.add.group();
+
+    npcgroup = game.add.group();
+    npcgroup.enableBody = true;
 
     ennemygroup = game.add.group();
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
-
-    /*ennemy=ennemygroup.create(200, 1800, 'bougie');
-    ennemy.scale.setTo(0.25,0.25);
-    ennemy.body.bounce.y = 0.2;
-    ennemy.body.gravity.y = 300;
-    ennemy.body.collideWorldBounds = true;*/
 
     weapon = game.add.weapon(30, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_CAMERA_BOUNDS;
@@ -183,22 +181,26 @@ function create() {
 
     weapon.trackSprite(player, 0, 0, true);
 
+    createMap();
+
     //==Controles==
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+
 }
 
 function update() {
     //==Physique==
     game.physics.arcade.collide(player, platforms);
-    game.physics.arcade.collide(caissegroup, platforms);
+    game.physics.arcade.collide(crategroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
-    game.physics.arcade.collide(caissegroup, caissegroup);
+    game.physics.arcade.collide(crategroup, crategroup);
     game.physics.arcade.collide(ennemygroup, platforms);
+    game.physics.arcade.collide(ennemygroup, crategroup);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
     game.physics.arcade.collide(player, breakablegroup, checkifbroken, null, this);
-    game.physics.arcade.collide(player, caissegroup);
+    game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
@@ -258,6 +260,8 @@ function update() {
         this.jumps--;
         this.jumping = false;
     }
+
+    //updateEnnemies();
 }
 
 //==Création de la TileMap==
@@ -271,8 +275,8 @@ function createMap(){
                     breakable.frame=dictiowall[8];
                 }
                 else if (map[i][j]==7){
-                    caisse=caissegroup.create(j*64,i*64,'caissesprite');
-                    caisse.body.gravity.y = 300;
+                    crate=crategroup.create(j*64,i*64,'cratesprite');
+                    crate.body.gravity.y = 300;
                 }
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
@@ -282,6 +286,9 @@ function createMap(){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
                     ground.body.immovable = true;
                     ground.frame=dictiowall[map[i][j]];
+                }
+                else if (map[i][j] == 'x'){
+                    createFoe(i, j);
                 }
             }
         }
@@ -334,12 +341,23 @@ function placeNPC(){
     }
 }
 
-//==Fonction de don de capacité==
+/*function updateEnnemies(){
+    ennemygroup.f
+}*/
+
+//==Fonctions de don de capacité==
 function giveSuperForce(){
     console.log('give super force');
     npcSuperForce.animations.play('giveAbility');
     MIGHT = 1;
-    caissegroup.body.immovable=true;
+    for (var i=0; i<crategroup.children.length; i++){
+        setCrateImmovable(crategroup.children[i]);
+    }
+}
+
+function setCrateImmovable(crate){
+    crate.body.immovable = true;
+    crate.body.moves = false;
 }
 
 function giveArmor(){
@@ -367,14 +385,15 @@ function giveDoubleJump(){
 function giveSize(){
     console.log('give size');
     npcSize.animations.play('giveAbility');
-    SIZE = 1;
+    SIZE = 0.5;
+    player.scale.setTo(SIZE, SIZE);
 }
 
 //==Création d'ennemis (à partir d'une position)
 function createFoe(x,y){
-    ennemy=ennemygroup.create(x*64,y*64,'ennemy');
-    ennemy.enableBody=true;
-    ennemy.scale.setTo(0.25,0.25);
+    console.log('foe');
+    ennemy = ennemygroup.create(y*64, x*64,'foe');
+    ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
     ennemy.body.collideWorldBounds = true;
@@ -392,10 +411,11 @@ function destroybullet(bullet,platform){
 }
 
 function checkifbroken(player,platform){
-    console.log('on breakable');
-    console.log(doublejumpok);
     if (!doublejumpok){
-        console.log('beak !');
         platform.kill();
     }
+}
+
+function render(){
+    
 }
