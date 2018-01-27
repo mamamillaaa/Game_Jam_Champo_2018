@@ -2,9 +2,11 @@ var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: pre
 
 
 function preload() {
-    
-	game.load.image('ground', 'assets/platform_01.png');
-	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+
+
+    game.load.image('ground', 'assets/platform_01.png');
+    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+
     game.load.spritesheet('dudebougie', 'assets/dudebougie.png', 283, 247);
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
@@ -47,6 +49,7 @@ d: plateforme doublesaut
 */
 
 var map = [
+<<<<<<< HEAD
 '                                                      r',
 '                                                      r',
 '                                                      r',
@@ -55,44 +58,55 @@ var map = [
 ' gg                                        9999       r',
 '           3          aa     ggttggttgggggggggg       r',
 '   ggg   ggggg  gggttggggggg                          r',
+=======
+'                                                    2 r',
+'                                           qggggggggggr',
+' qk                                        9999       r',
+'           3          aa     qgttggttgggggggggk       r',
+'   qgk   qgggk  qggttggggggk                          r',
+>>>>>>> 36012a2a613156ddbd50875a402b0a8e9d8ded1a
 '                        m                           ggm',
 '      d               m                               r',
-'          wgggggggggggggggggggggggggg    wg88gggggggn9r',
+'          wgggggggggggggggggggggggggk    wg88gggggggn9r',
 '         dl                              l     m    r9r',
+'          l   1            m             l     m   0r9r',
+'      qk  l  qgk           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
-'          9           abbbbbbbbbbbbb     l     m   mr9r',
-' ggg      sbbbbbbbbbbbb                  l         mr9r',
+'          9           abbbbbbbbbbbbk     l     m   mr9r',
+' qgk      sbbbbbbbbbbbe                  l         mr9r',
 '                                         l      7 6mr9r',
-'      gg                                 sbbbbbbbbbbe9r',
+'      qk                                 sbbbbbbbbbbe9r',
 '                           w88ggggggn                 r',
-'         d            gg   l        r                 r',
-'   ddd    gg              dl        r                 r',
+'         d            qk   l        r                 r',
+'   ddd    qk              dl        r                 r',
 '                           9     0  r                 r',
-'    ggg         wggg88gggggmmbbbbbbbe                 r',
+'    qgx         wggg88gggggggbbbbbbbe                 r',
 '          d     l           r                         r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 'dddl          r                                       r',
 '   l        x r                                       r',
-'g  sb88bbbbbbbe                                       r',
+'k  sb88bbbbbbbe                                       r',
 '    l    7            gggggggg                        r',
 '    9 4  7                                            r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggm'
 ];
 
 var dictiowall = {
-    'g':4,
-    'n':0,
-    's':2,
-    'e':1,
-    'w':3,
-    'l':7,
-    'r':5,
-    'b':6,
-    'm':8,
-    't':10,
-    'a':11,
-    'd':12,
+    'g':7,//droite gauche
+    'n':2,//coin haut droite
+    's':0,//coin bas gauche
+    'e':1,//coin bas droite
+    'w':3,//coin haut gauche
+    'l':6,//haut bas
+    'r':6,
+    'b':7,//tube vertical
+    'm':1,//angle bas droit
+    't':10,//trap
+    'a':11,//pique
+    'd':7,
+    'q':5,
+    'k':4,
 };
 
 //==Joueur et caractéristiques==
@@ -477,7 +491,7 @@ function platforme(){
 }
 
 function updateShadowTexture(){    
-        // Draw shadow 
+
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);
         var radius = 400 + game.rnd.integerInRange(1,10);
