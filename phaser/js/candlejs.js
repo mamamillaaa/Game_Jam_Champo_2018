@@ -3,9 +3,6 @@ var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: pre
 
 function preload() {
 
-    
-	game.load.image('ground', 'assets/platform_01.png');
-	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 
     game.load.image('ground', 'assets/platform_01.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
@@ -46,50 +43,52 @@ d: plateforme doublesaut
 
 var map = [
 '                                                    2 r',
-'                                           gggggggggggn',
-' gg                                        9999       r',
-'           3          aa     ggttggttgggggggggg       r',
-'   ggg   ggggg  gggttggggggg                          r',
+'                                           qggggggggggr',
+' qx                                        9999       r',
+'           3          aa     qgttggttgggggggggx       r',
+'   qgx   qgggx  qggttggggggx                          r',
 '                        m                           ggm',
 '      d               m                               r',
-'          wgggggggggggggggggggggggggg    wg88gggggggn9r',
+'          wgggggggggggggggggggggggggx    wg88gggggggn9r',
 '         dl                              l     m    r9r',
 '          l   1            m             l     m   0r9r',
-'      gg  l  ggg           m             l    gm   mr9r',
+'      qx  l  ggg           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
-'          9           abbbbbbbbbbbbb     l     m   mr9r',
-' ggg      sbbbbbbbbbbbb                  l         mr9r',
+'          9           abbbbbbbbbbbbx     l     m   mr9r',
+' qgx      sbbbbbbbbbbbe                  l         mr9r',
 '                                         l      7 6mr9r',
-'      gg                                 sbbbbbbbbbbe9r',
+'      qx                                 sbbbbbbbbbbe9r',
 '                           w88ggggggn                 r',
 '         d            gg   l        r                 r',
-'   ddd    gg              dl        r                 r',
+'   ddd    qx              dl        r                 r',
 '                           9     0  r                 r',
-'    ggg         wggg88gggggmmbbbbbbbe                 r',
+'    qgx         wggg88gggggggbbbbbbbe                 r',
 '          d     l           r                         r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 'dddl          r                                       r',
 '   l          r                                       r',
-'g  sb88bbbbbbbe                                       r',
-'    l    7            gggggggg                        r',
+'x  sn88qbbbbbbe                                       r',
+'    l    7            qggggggx                        r',
 '    9 4  7                                            r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggm',
 ];
 
 var dictiowall = {
-    'g':4,
-    'n':0,
-    's':2,
-    'e':1,
-    'w':3,
-    'l':7,
-    'r':5,
-    'b':6,
-    'm':8,
-    't':10,
-    'a':11,
-    'd':12,
+    'g':7,//droite gauche
+    'n':2,//coin haut droite
+    's':0,//coin bas gauche
+    'e':1,//coin bas droite
+    'w':3,//coin haut gauche
+    'l':6,//haut bas
+    'r':6,
+    'b':7,//tube vertical
+    'm':1,//angle bas droit
+    't':10,//trap
+    'a':11,//pique
+    'd':7,
+    'q':5,
+    'x':4,
 };
 
 //==Joueur et caractéristiques==
@@ -442,8 +441,7 @@ function platforme(){
 }
 
 function updateShadowTexture(){    
-        // Draw shadow    
-        console.log ("test");
+        // Draw shadow
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);    
         var radius = 400 + game.rnd.integerInRange(1,10);
