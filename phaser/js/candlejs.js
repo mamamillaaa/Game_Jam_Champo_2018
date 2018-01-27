@@ -7,7 +7,7 @@ function preload() {
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
     game.load.image('bullet', 'assets/flamme.png');
-    game.load.image('background', 'assets/michel-galaup.jpg');
+    game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
     game.load.image('spikesprite', 'assets/diamong.png');
@@ -46,14 +46,14 @@ var map = [
 '      d               m                               r',
 '          wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '         dl                              l     m    r9r',
-'    ggg   l   1            m             l     m   0r9r',
+'    ggg   l               m             l     m   0r9r',
 '          l  ggg           m             l    gm   mr9r',
 ' d        l                9             l     m   mr9r',
-'          9           abbbbbbbbbbbbb     l     m   mr9r',
+'          9     1     abbbbbbbbbbbbb     l     m   mr9r',
 '  gggg    sbbbbbbbbbbbb                  l         mr9r',
 '                                         l      7 6mr9r',
 '       d                                 sbbbbbbbbbbe9r',
-'         gg                w88111111n                 r',
+'         gg                w88ggggggn                 r',
 '   d                  gg   l        r                 r',
 '                          dl        r                 r',
 '    ggg                    9     0  r                 r',
@@ -63,8 +63,8 @@ var map = [
 '  dl          r                                       r',
 '   l          r                                       r',
 'g  sb88bbbbbbbe                                       r',
-' d  l    r            gggggggg                        r',
-'    9 4  r                                            r',
+' d  l    7            gggggggg                        r',
+'    9 4  7                                            r',
 'gggggggggggggggggttttttgggggttttgggggggggggggtttggggggg',
 ];
 
@@ -203,7 +203,9 @@ function create() {
 function update() {
     //==Physique==
 	game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(caissegroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
+    game.physics.arcade.collide(caissegroup, caissegroup);
     game.physics.arcade.collide(ennemygroup, platforms);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
@@ -282,6 +284,7 @@ function createMap(){
                 }
                 else if (map[i][j]==7){
                     caisse=caissegroup.create(j*64,i*64,'caissesprite');
+                    caisse.body.gravity.y = 300;
                 }
                 else if (map[i][j]=='t'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
