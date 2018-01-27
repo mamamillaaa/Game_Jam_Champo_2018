@@ -1,16 +1,15 @@
-var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: preload, create: create, update: update, render: render});
 
 
 function preload() {
-<<<<<<< HEAD
-    
+
     
 	game.load.image('ground', 'assets/platform_01.png');
 	game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-=======
+
     game.load.image('ground', 'assets/platform_01.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
->>>>>>> 3481c0ecb19d297ece4c209dec523c86bc553941
+
     game.load.spritesheet('dudebougie', 'assets/dudebougie.png', 283, 247);
     game.load.spritesheet('testsprite', 'assets/testsprite.png', 64, 64);
     game.load.image('bougie', 'assets/bougie.png');
@@ -140,16 +139,9 @@ var spikegroup;
 var spike;
 
 
-function create() {
-<<<<<<< HEAD
-    
-    
-       
+function create() { 
 
-	game.physics.startSystem(Phaser.Physics.ARCADE);
-=======
     game.physics.startSystem(Phaser.Physics.ARCADE);
->>>>>>> 3481c0ecb19d297ece4c209dec523c86bc553941
 
     game.add.sprite(0, 0, 'background');
 
@@ -202,8 +194,6 @@ function create() {
     //==Controles==
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
-    
-    
     
     shadowTexture = game.add.bitmapData(game.width, game.height);    
     // Create an object that will use the bitmap as a texture    
@@ -315,7 +305,6 @@ function createMap(){
                 }
                 else if(map[i][j]=='d'){
                     
-                    console.log("d");
                 }
                 else if (map[i][j] in dictiowall && map[i][j] != 'd'){
                     var ground=platforms.create(j*64, i*64, 'spritewall');
@@ -457,7 +446,7 @@ function updateShadowTexture(){
         console.log ("test");
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);    
-        var radius = 100 + game.rnd.integerInRange(1,10);
+        var radius = 400 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
@@ -471,4 +460,11 @@ function updateShadowTexture(){
         // This just tells the engine it should update the texture cache    
         shadowTexture.dirty = true;
         
+}
+
+function render() {
+
+    //smokeEmitter.debug(432, 522);
+    //flameEmitter.debug(10, 522);
+
 }
