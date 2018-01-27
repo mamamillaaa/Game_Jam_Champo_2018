@@ -10,6 +10,7 @@ function preload() {
     game.load.image('background', 'assets/michel-galaup.jpg');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64,64);
     game.load.image('caissesprite', 'assets/star.png');
+    game.load.image('spikesprite', 'assets/diamong.png');
 }
 
 
@@ -37,13 +38,13 @@ var map = [
 '                                           gggggggggggn',
 ' gg                                        9999       r',
 '                             ggttggttgggggggggg       r',
-'                                                      r',
+'           p                                          r',
 '   ggg   ggggg  gggttggggggg                          r',
 '                        m                           ggm',
 '                      m                               r',
 '       gg wgggggggggggggggggggggggggg    wg88gggggggn9r',
 '   dd     l                              l     m    r9r',
-'          l                m             l     m   0r9r',
+'          l  p             m             l     m   0r9r',
 '          l  gg            m             l    gm   mr9r',
 '     gg   l                9             l     m   mr9r',
 '          9           abbbbbbbbbbbbb     l     m   mr9r',
@@ -53,7 +54,7 @@ var map = [
 '  ddd                      w88111111n                 r',
 '         gg           gg   l        r                 r',
 '                           l        r                 r',
-'    ggg                    9        r                 r',
+'    ggg                    9     p  r                 r',
 '                wggg88gggggmmbbbbbbbe                 r',
 '                l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
@@ -61,7 +62,7 @@ var map = [
 '   l          r                                       r',
 'g  sb88bbbbbbbe       gggggggg                        r',
 '    l    r                                            r',
-'    9    r                                            r',
+'    9 p  r                                            r',
 'ggggggggggggggggggttttggggggtttggggggggggggggtttggggggg',
 ];
 
@@ -124,6 +125,9 @@ var breakable;
 var caissegroup;
 var caisse;
 
+var spikegroup;
+var spike;
+
 
 function create() {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -139,6 +143,12 @@ function create() {
 	platforms = game.add.group();
 	platforms.enableBody = true;
     game.world.setBounds(0, 0, 4000, map.width*64);
+
+    npcgroup = game.add.group();
+    npcgroup.enableBody = true;
+
+    spikegroup=game.add.group();
+    spikegroup.enableBody=true;
 
     createMap();
 
@@ -157,8 +167,7 @@ function create() {
     ennemygroup.enableBody = true;
     ennemygroup.physicsBodyType = Phaser.Physics.ARCADE;
 
-    npcgroup = game.add.group();
-    npcgroup.enableBody = true;
+
     /*npcDoubleJump = npcgroup.create(200, 1800, 'dude');*/
 
 
@@ -184,10 +193,13 @@ function create() {
 function update() {
     //==Physique==
 	game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(npcgroup, platforms);
     game.physics.arcade.collide(ennemygroup, platforms);
     game.physics.arcade.collide(weapon.bullets, platforms, destroybullet, null, this);
     game.physics.arcade.collide(player, ennemygroup, loseLife, null, this);
     game.physics.arcade.collide(player, breakablegroup, checkifbroken, null, this);
+    game.physics.arcade.collide(player, caissegroup);
+    game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
@@ -261,8 +273,20 @@ function createMap(){
 
                 }
                 else if(map[i][j]==7){
-                 var breakable=breakablegroup.create(j*64,i*64,'caissesprite');
-                breakable.body.immovable=true;
+                caisse=caissegroup.create(j*64,i*64,'caissesprite');
+                
+
+                }
+                else if(map[i][j]=='p'){
+                    var npc=npcgroup.create(j*64,i*64,'bougie');
+                    npc.scale.setTo(0.25,0.25);
+                    npc.body.bounce.y = 0.2;
+                    npc.body.gravity.y = 300;
+                    npc.body.immovable=true;
+                }
+                else if(map[i][j]=='t'){
+                spike=spikegroup.create(j*64,i*64,'spikesprite');
+                spike.body.immovable=true;
 
                 }
                 else{
