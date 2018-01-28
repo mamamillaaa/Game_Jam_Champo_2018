@@ -234,8 +234,8 @@ function update() {
     game.physics.arcade.overlap(player, npcDoubleJump, npcTab[3], null, this);
     game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
 
-    key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
-    key1.onDown.add(platforme, this);
+    /*key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+    key1.onDown.add(platforme, this);*/
 
     player.body.velocity.x = 0;
 
@@ -263,7 +263,7 @@ function update() {
             player.frame = 6;
         }
 
-        if (fireButton.isDown){
+        if (fireButton.isDown && fireButton.duration < 200){
             if(cursors.right.isDown){
                 //player.animations.play('attack_right');
                 player.frame = 7;
