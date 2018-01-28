@@ -50,14 +50,14 @@ var map = [
 '                                                    2 r',
 '                                           qggggggggggr',
 ' qk                                        9999       r',
-'           3          aa     qgttggttgggggggggk       r',
-'   qgk   qgggk  qggttggggggk                  l     x r',
-'                        m                     l     ggm',
-'      d               m                       l       r',
+'           3          aa     qkttqkttqggggggggk       r',
+'   qgk   qgggk  qgkttqgggggk                  l     x r',
+'                        l                     l     ggm',
+'      d               l                       l       r',
 '          wggggggggggggggggggggggk       wg88gggggggn9r',
 '         dl                              l     m    r9r',
-'          l   1            m            gl    xm   0r9r',
-'      qk  l  qgk           m             l    gm   mr9r',
+'          l   1            m            ql    xm   0r9r',
+'      qk  l  qgk           m             l    qm   mr9r',
 ' d        l                9             l     m   mr9r',
 '          9           wbbbbbbbbbbbbk     l     m   mr9r',
 ' qgk      sbbbbbbbbbbbe                  l         mr9r',
@@ -74,7 +74,7 @@ var map = [
 'dddl          r                 ggggggggggk           r',
 '   l        x r                             d         r',
 'k  sb88bbbbbbbe                              qggggggggr',
-'    l    7            ggggggggk                       r',
+'    l    7            qgggggggk                       r',
 '    9 4  7                                            r',
 'ggggggggggggggggkttttttqgggkttttqgggggggggggktttqgggggm'
 ];
@@ -485,7 +485,7 @@ function updateShadowTexture(){
 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);
-        var radius = 400 + game.rnd.integerInRange(1,10);
+        var radius = 1000 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
