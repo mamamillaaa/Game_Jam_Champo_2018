@@ -24,7 +24,7 @@ function preload() {
     game.load.image('fragile', 'assets/sol_fragile.png');
     game.load.spritesheet('spikesprite', 'assets/TrappeSprite.png',64,64);
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
-    game.load.spritesheet('life', 'assets/life.png', 58, 53);
+    game.load.spritesheet('life', 'assets/life.png', 64, 64);
     game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
     game.load.spritesheet('npcArmor', 'assets/npcArmor.png', 32, 64);
     game.load.spritesheet('npcFlame', 'assets/npcFlame.png', 32, 64);
@@ -70,8 +70,8 @@ var map = [
 '          l   1            r            ql    xm   0r r',
 '      qk  l  qgn           r             l    qm   mr r',
 ' d        l    sk          9             l     m   mr r',
-'          9         aawbbbbbbbkgqbbk     l     m   mr r',
-' qgk      sbbkgqbbbbbbe                  l         mr r',
+'          9         aawbbbbbbbktqbbk     l     m   mr r',
+' qgk      sbbktqbbbbbbe                  l         mr r',
 '                                         l a    7 6mr r',
 '      qk                                 sbbbbbbbbbbe r',
 '                           w88ggggggn                 r',
@@ -126,10 +126,11 @@ var doublejumpok=true;
 //Taille
 var SIZE = 1;
 //Vie
-var LIFE = 6;
+var LIFE;
 var lifeBar;
 //Arme
 var weapon;
+var lumsize;
 
 var platforms;
 
@@ -164,7 +165,12 @@ var aura;
 var trougroup;
 var trou;
 
+var lifegroup;
+var lifepoint;
+
 function create() {
+
+    lifeBar=[];
     
     // -- musique --
     music = game.add.audio('cave');
@@ -179,9 +185,15 @@ function create() {
     trapgroup=game.add.group();
     trapgroup.enableBody=true;
 
+    lifegroup=game.add.group();
+
     trougroup=game.add.group();
     trougroup.enableBody=true;
 
+    LIFE = 6;
+
+
+    
 
 
     breakablegroup=game.add.group();
@@ -222,6 +234,7 @@ function create() {
     //game.worldScale += 0.5
 
     lifeBar = game.add.group();
+    lumsize=400;
 
     npcgroup = game.add.group();
     npcgroup.enableBody = true;
@@ -250,6 +263,15 @@ function create() {
     // Set the blend mode to MULTIPLY. This will darken the colors of    
     // everything below this sprite.    
     lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
+
+    for (var o=0;o<LIFE;o++){
+        lifepoint=lifegroup.create(0+60*o,20,'life');
+        lifepoint.animations.add('burn', [0,1,2,3], 10, true);
+        lifepoint.animations.play('burn');
+        lifepoint.fixedToCamera=true;
+        lifepoint.bringToTop();
+        lifeBar[o]=lifepoint;
+    }
 }
 
 function update() {
@@ -491,6 +513,9 @@ function giveFlame(){
     npcFlame.animations.play('giveAbility');
     npcFlame.body.enable=false;
     FLAME = false;
+    aura.scale.setTo(0.5,0.5);
+    lumsize=200;
+    updateShadowTexture();
 }
 
 function giveDoubleJump(){
@@ -529,6 +554,7 @@ function createFoe(x,y){
 //==Perte de vie==
 function loseLife(){
     LIFE--;
+    lifeBar[LIFE].kill();
     if (LIFE==0){
         death();
     }
@@ -596,7 +622,7 @@ function updateShadowTexture(){
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);
 
-        var radius = 300 + game.rnd.integerInRange(1,10);
+        var radius = lumsize + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
