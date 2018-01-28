@@ -100,6 +100,8 @@ var dictiowall = {
     'k':4,
 };
 
+var dist;
+
 //==Joueur et caractéristiques==
 var player;
 //Puissance d'attaque :
@@ -340,7 +342,7 @@ function createMap(){
                 else if (map[i][j]=='a'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
-                    spike.animations.add('piquant', [0, 1, 2, 3,2,1,0], 10, true);
+                    spike.animations.add('piquant', [0, 1, 2, 3,2,1,0], 5, true);
                     spike.animations.play('piquant');
                 }
                 else if(map[i][j]=='t'){
@@ -468,6 +470,8 @@ function createFoe(x,y){
     ennemy = ennemygroup.create(y*64, x*64,'foe');
     ennemy.animations.add('left', [0, 1, 2]);
     ennemy.animations.add('right', [4, 5, 6]);
+    ennemy.animations.add('static', [3,4,5], 5, true);
+    ennemy.animations.play('static');
     ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
@@ -510,7 +514,7 @@ function updateShadowTexture(){
 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);
-        var radius = 1000 + game.rnd.integerInRange(1,10);
+        var radius = 400 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
@@ -536,9 +540,13 @@ function trappegestion(player ,trappe){
 
 
     if (trappe.frame==0) {
-    trappe.animations.play('open',30, false);
+    trappe.animations.play('open',2, false);
     trappe.body.enable=false;
 }
     
 
+}
+
+function checkdistance(player, ennemy){
+    dist= Math.distance(player.x,player.y,ennemy.x,ennemy.y);     
 }
