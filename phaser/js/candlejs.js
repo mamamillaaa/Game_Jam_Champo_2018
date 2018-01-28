@@ -4,6 +4,10 @@ var game = new Phaser.Game(1000, 600, Phaser.CANVAS, 'CandleGuy', { preload: pre
 function preload() {
 
 
+    // -- musique --
+    
+    game.load.audio('cave', ['sound/cave.mp3', 'sound/cave.ogg']);
+    
     game.load.image('ground', 'assets/platform_01.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
 
@@ -55,32 +59,32 @@ d: plateforme doublesaut
 
 var map = [
 '                                                    2 r',
-'                                           qggggggggggr',
-' qk                                        9999       r',
+'                                           qggg8gg8gggr',
+' qk                                   a    9999       r',
 '           3          aa     qkttqkttqggggggggk       r',
 '   qgk   qgggk  qgkttqgggggk                  l     x r',
 '                        l                     l     ggm',
-'      d               l                       l       r',
-'          wggggaaggggggggggggggggk       wg88gggggggn9r',
-'         dl                              l     m    r9r',
-'          l   1            m            ql    xm   0r9r',
-'      qk  l  qgk           m             l    qm   mr9r',
-' d        l                9             l     m   mr9r',
-'          9         aawbbbbbbbbbbbbk     l     m   mr9r',
-' qgk      sbbbbbbbbbbbe                  l         mr9r',
-'                                         l      7 6mr9r',
-'      qk                                 sbbbbbbbbbbe9r',
+'      d        aa     l                       l     9 r',
+'          wggggggg888ggggggngggggk       wg88gggggggn r',
+'         dl                r             l     m    r r',
+'          l   1            r            ql    xm   0r r',
+'      qk  l  qgn           r             l    qm   mr r',
+' d        l    sk          9             l     m   mr r',
+'          9         aawbbbbbbbkgqbbk     l     m   mr r',
+' qgk      sbbkgqbbbbbbe                  l         mr r',
+'                                         l a    7 6mr r',
+'      qk                                 sbbbbbbbbbbe r',
 '                           w88ggggggn                 r',
 '         d            qk   l        r                 r',
 '   ddd    qk              dl        r                 r',
 '                           9     0  rgggk             r',
-'    qk          wggg88gggggggbbbbbbbe       d         r',
+'    qk          wggg88gggggggbbbbbbbe       d   a  a  r',
 '          d     l           r                 qgggggggr',
-'            x   l           r                         r',
-'   wg88gggggggn sbb88bababbbe                         r',
+'            x   l     a a   r                         r',
+'   wg88gggggggn sbb88bbbbbbbe      a   a              r',
 'dddl          r                 ggggggggggk           r',
-'   l     a  x r                            d          r',
-'k  sb88bbbbbbbe                              qggggggggr',
+'   l     a  x r                            d     a    r',
+'k  sb88bbbbbbbe           a                  qgggggkgqr',
 '    l    7            qgggggggk                       r',
 '    9 4  7                                            r',
 'ggggggggggggggggkttttttqgggkttttqgggggggggggktttqgggggm'
@@ -161,7 +165,13 @@ var trougroup;
 var trou;
 
 function create() {
+    
+    // -- musique --
+    music = game.add.audio('cave');
+    music.play();
 
+    
+    // -- physique --
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'background');
@@ -263,16 +273,28 @@ function update() {
     game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
     game.physics.arcade.collide(aura, ennemygroup, reactionfoe, null, this);
+<<<<<<< HEAD
     game.physics.arcade.collide(ennemygroup,breakablegroup);
     game.physics.arcade.collide(ennemygroup,crategroup);
     game.physics.arcade.collide(trougroup,crategroup);
+=======
+    game.physics.arcade.collide(breakablegroup , ennemygroup);
+>>>>>>> 7e3cf828f3b613ff6bc314924a48f424fef3b4a9
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
     game.physics.arcade.overlap(player, npcFlame, npcTab[2], null, this);
     game.physics.arcade.overlap(player, npcDoubleJump, npcTab[3], null, this);
     game.physics.arcade.overlap(player, npcSize, npcTab[4], null, this);
-
+    
+    for (var i=0; i<crategroup.children.length; i++){
+        if (crategroup.children[i].body.velocity.x > 0){
+            crategroup.children[i].body.velocity.x -= 1;
+        }
+        else if(crategroup.children[i].body.velocity.x < 0){
+            crategroup.children[i].body.velocity.x += 1;
+        }
+    }
     /*key1 = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
     key1.onDown.add(platforme, this);*/
 
@@ -479,7 +501,7 @@ function giveDoubleJump(){
     npcDoubleJump.animations.play('giveAbility');
     npcDoubleJump.body.enable=false;
     JUMPS = 1;
-    DOUBLEJUMPSPEED = 300;
+    DOUBLEJUMPSPEED = 250;
     doublejumpok = false;
     placeMoreGround();
 }
@@ -576,7 +598,8 @@ function updateShadowTexture(){
 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);
-        var radius = 400 + game.rnd.integerInRange(1,10);
+
+        var radius = 300 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
         // Draw circle of light with a soft edge    
@@ -593,6 +616,7 @@ function updateShadowTexture(){
 
 function render() {
 
+    game.debug.soundInfo(cave, 20, 32);
     //smokeEmitter.debug(432, 522);
     //flameEmitter.debug(10, 522);
     game.debug.body(aura);
