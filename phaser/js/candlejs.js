@@ -32,6 +32,7 @@ function preload() {
     game.load.spritesheet('npcSize', 'assets/npcSize.png', 32, 64);
     game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
+    game.load.image('aura', 'assets/aura.png');
 
 }
 
@@ -56,32 +57,32 @@ d: plateforme doublesaut
 
 var map = [
 '                                                    2 r',
-'                                           qggggggggggr',
-' qk                                        9999       r',
+'                                           qggg8gg8gggr',
+' qk                                   a    9999       r',
 '           3          aa     qkttqkttqggggggggk       r',
 '   qgk   qgggk  qgkttqgggggk                  l     x r',
 '                        l                     l     ggm',
-'      d               l                       l     9 r',
-'          wggggaaggggggggggggggggk       wg88gggggggn r',
-'         dl                              l     m    r r',
-'          l   1            m            ql    xm   0r r',
-'      qk  l  qgk           m             l    qm   mr r',
-' d        l                9             l     m   mr r',
-'          9         aawbbbbbbbbbbbbk     l     m   mr r',
-' qgk      sbbbbbbbbbbbe                  l         mr r',
-'                                         l      7 6mr r',
+'      d        aa     l                       l     9 r',
+'          wggggggg888ggggggngggggk       wg88gggggggn r',
+'         dl                r             l     m    r r',
+'          l   1            r            ql    xm   0r r',
+'      qk  l  qgn           r             l    qm   mr r',
+' d        l    sk          9             l     m   mr r',
+'          9         aawbbbbbbbkgqbbk     l     m   mr r',
+' qgk      sbbkgqbbbbbbe                  l         mr r',
+'                                         l a    7 6mr r',
 '      qk                                 sbbbbbbbbbbe r',
 '                           w88ggggggn                 r',
 '         d            qk   l        r                 r',
 '   ddd    qk              dl        r                 r',
 '                           9     0  rgggk             r',
-'    qk          wggg88gggggggbbbbbbbe       d         r',
+'    qk          wggg88gggggggbbbbbbbe       d   a  a  r',
 '          d     l           r                 qgggggggr',
-'            x   l           r                         r',
-'   wg88gggggggn sbb88bababbbe                         r',
+'            x   l     a a   r                         r',
+'   wg88gggggggn sbb88bbbbbbbe      a   a              r',
 'dddl          r                 ggggggggggk           r',
-'   l     a  x r                            d          r',
-'k  sb88bbbbbbbe                              qggggggggr',
+'   l     a  x r                            d     a    r',
+'k  sb88bbbbbbbe           a                  qgggggkgqr',
 '    l    7            qgggggggk                       r',
 '    9 4  7                                            r',
 'ggggggggggggggggkttttttqgggkttttqgggggggggggktttqgggggm'
@@ -103,6 +104,8 @@ var dictiowall = {
     'q':5,
     'k':4,
 };
+
+var dist;
 
 //==Joueur et caractéristiques==
 var player;
@@ -154,6 +157,8 @@ var spike;
 var trapgroup;
 var trap;
 
+var aura;
+
 function create() {
     
     // -- musique --
@@ -196,6 +201,10 @@ function create() {
     player.animations.add('attack_left', [8, 8], 10, true);
     player.animations.add('attack_right', [7, 7], 10, true);
     player.animations.add('took_dmgs', [9, 10], 5, true);
+
+    aura=game.add.sprite(player.x-200, player.y-200,'aura');
+    aura.enableBody=true;
+    game.physics.arcade.enable(aura);
     //player.animations.add('died', [10, 10, 10, 10, 10], 5, true);
     this.jumping = false;
     game.camera.follow(player);
@@ -233,6 +242,8 @@ function create() {
 }
 
 function update() {
+    aura.x=player.x-200;
+    aura.y=player.y-200;
     //==Lumiere==
     lightSprite.reset(game.camera.x, game.camera.y);    
     updateShadowTexture();
@@ -249,6 +260,8 @@ function update() {
     game.physics.arcade.collide(player, breakablegroup, checkifbroken, null, this);
     game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
+    game.physics.arcade.collide(aura, ennemygroup, reactionfoe, null, this);
+    game.physics.arcade.collide(breakablegroup , ennemygroup);
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
@@ -280,6 +293,7 @@ function update() {
         else if (cursors.right.isDown){
             player.body.velocity.x = SPEED;
             player.animations.play('right');
+
         }
         else{
             player.animations.stop();
@@ -358,7 +372,7 @@ function createMap(){
                 else if (map[i][j]=='a'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
-                    spike.animations.add('piquant', [0, 1, 2, 3,2,1,0], 10, true);
+                    spike.animations.add('piquant', [0, 1, 2, 3,2,1,0], 5, true);
                     spike.animations.play('piquant');
                 }
                 else if(map[i][j]=='t'){
@@ -486,6 +500,8 @@ function createFoe(x,y){
     ennemy = ennemygroup.create(y*64, x*64,'foe');
     ennemy.animations.add('left', [0, 1, 2]);
     ennemy.animations.add('right', [4, 5, 6]);
+    ennemy.animations.add('static', [3,4,5], 5, true);
+    ennemy.animations.play('static');
     ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
@@ -528,6 +544,7 @@ function updateShadowTexture(){
 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
         shadowTexture.context.fillRect(0, 0, game.width, game.height);
+
         var radius = 300 + game.rnd.integerInRange(1,10);
         var heroX = player.x - game.camera.x;       
         var heroY = player.y - game.camera.y;       
@@ -546,7 +563,9 @@ function updateShadowTexture(){
 function render() {
 
     game.debug.soundInfo(cave, 20, 32);
-
+    //smokeEmitter.debug(432, 522);
+    //flameEmitter.debug(10, 522);
+    game.debug.body(aura);
 }
 
 function trappegestion(player ,trappe){
@@ -554,9 +573,26 @@ function trappegestion(player ,trappe){
 
 
     if (trappe.frame==0) {
-    trappe.animations.play('open',30, false);
+    trappe.animations.play('open',2, false);
     trappe.body.enable=false;
 }
     
 
+}
+
+function checkdistance(player, ennemy){
+    dist= Math.distance(player.x,player.y,ennemy.x,ennemy.y);     
+}       
+
+function reactionfoe(aura, ennemy){
+    ennemy.animations.play('static');
+    if(player.x-ennemy.x>0){
+        ennemy.animations.play('right',5,true);
+        ennemy.body.velocity.x=SPEED-50;
+    }
+    else
+    {
+        ennemy.animations.play('left',5,true);
+        ennemy.body.velocity.x=-SPEED+50;
+    } 
 }
