@@ -13,9 +13,15 @@ function preload() {
     game.load.image('bullet', 'assets/flamme.png');
     game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
+<<<<<<< HEAD
     game.load.image('cratesprite', 'assets/caisse.png');
     game.load.spritesheet('spikesprite', 'assets/spike.png',64,64);
     game.load.spritesheet('trappesprite', 'assets/TrappeSprite.png',64,64);
+=======
+    game.load.image('cratesprite', 'assets/star.png');
+    game.load.image('fragile', 'assets/sol_fragile.png');
+    game.load.spritesheet('spikesprite', 'assets/TrappeSprite.png',64,64);
+>>>>>>> 214e48fd76e071fbb172ec494efca77dec4fbc11
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
@@ -326,7 +332,7 @@ function createMap(){
         for (var j=0; j<map[i].length; j++){
             if (map[i][j] != ' '){
                 if (map[i][j]==8){
-                    var breakable=breakablegroup.create(j*64,i*64,'testsprite');
+                    var breakable=breakablegroup.create(j*64,i*64,'fragile');
                     breakable.body.immovable=true;
                     breakable.frame=dictiowall[8];
                 }
