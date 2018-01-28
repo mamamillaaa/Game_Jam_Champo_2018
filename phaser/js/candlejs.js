@@ -28,6 +28,7 @@ function preload() {
     game.load.spritesheet('npcSize', 'assets/npcSize.png', 32, 64);
     game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
+    game.load.image('aura', 'assets/aura.png');
 
 }
 
@@ -152,6 +153,8 @@ var spike;
 var trapgroup;
 var trap;
 
+var aura;
+
 function create() {
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -188,6 +191,10 @@ function create() {
     player.animations.add('attack_left', [8, 8], 10, true);
     player.animations.add('attack_right', [7, 7], 10, true);
     player.animations.add('took_dmgs', [9, 10], 5, true);
+
+    aura=game.add.sprite(player.x-200, player.y-200,'aura');
+    aura.enableBody=true;
+    game.physics.arcade.enable(aura);
     //player.animations.add('died', [10, 10, 10, 10, 10], 5, true);
     this.jumping = false;
     game.camera.follow(player);
@@ -225,6 +232,8 @@ function create() {
 }
 
 function update() {
+    aura.x=player.x-200;
+    aura.y=player.y-200;
     //==Lumiere==
     lightSprite.reset(game.camera.x, game.camera.y);    
     updateShadowTexture();
@@ -242,6 +251,7 @@ function update() {
     game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
 
+    game.physics.arcade.overlap(aura, ennemygroup, reactionfoe, null, this);
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
     game.physics.arcade.overlap(player, npcFlame, npcTab[2], null, this);
@@ -264,6 +274,7 @@ function update() {
         else if (cursors.right.isDown){
             player.body.velocity.x = SPEED;
             player.animations.play('right');
+
         }
         else{
             player.animations.stop();
@@ -471,7 +482,7 @@ function createFoe(x,y){
     ennemy.animations.add('left', [0, 1, 2]);
     ennemy.animations.add('right', [4, 5, 6]);
     ennemy.animations.add('static', [3,4,5], 5, true);
-    ennemy.animations.play('static');
+    //ennemy.animations.play('static');
     ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
@@ -533,6 +544,7 @@ function render() {
 
     //smokeEmitter.debug(432, 522);
     //flameEmitter.debug(10, 522);
+    game.debug.body(aura);
 }
 
 function trappegestion(player ,trappe){
@@ -549,4 +561,9 @@ function trappegestion(player ,trappe){
 
 function checkdistance(player, ennemy){
     dist= Math.distance(player.x,player.y,ennemy.x,ennemy.y);     
+}       
+
+function reactionfoe(aura, ennemy){
+    console.log('JAMBON');
+    ennemy.animations.play('static');
 }
