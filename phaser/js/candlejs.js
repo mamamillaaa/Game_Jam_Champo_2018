@@ -72,7 +72,7 @@ var map = [
 '            x   l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 'dddl          r                 ggggggggggk           r',
-'   l        x r                             d         r',
+'   l        x r                            d          r',
 'k  sb88bbbbbbbe                              qggggggggr',
 '    l    7            qgggggggk                       r',
 '    9 4  7                                            r',
