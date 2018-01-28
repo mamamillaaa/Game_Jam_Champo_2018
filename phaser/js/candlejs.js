@@ -13,8 +13,9 @@ function preload() {
     game.load.image('bullet', 'assets/flamme.png');
     game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
-    game.load.image('cratesprite', 'assets/star.png');
-    game.load.spritesheet('spikesprite', 'assets/TrappeSprite.png',64,64);
+    game.load.image('cratesprite', 'assets/caisse.png');
+    game.load.spritesheet('spikesprite', 'assets/spike.png',64,64);
+    game.load.spritesheet('trappesprite', 'assets/TrappeSprite.png',64,64);
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
@@ -54,12 +55,12 @@ var map = [
 '   qgk   qgggk  qgkttqgggggk                  l     x r',
 '                        l                     l     ggm',
 '      d               l                       l       r',
-'          wggggggggggggggggggggggk       wg88gggggggn9r',
+'          wggggaaggggggggggggggggk       wg88gggggggn9r',
 '         dl                              l     m    r9r',
 '          l   1            m            ql    xm   0r9r',
 '      qk  l  qgk           m             l    qm   mr9r',
 ' d        l                9             l     m   mr9r',
-'          9           wbbbbbbbbbbbbk     l     m   mr9r',
+'          9         aawbbbbbbbbbbbbk     l     m   mr9r',
 ' qgk      sbbbbbbbbbbbe                  l         mr9r',
 '                                         l      7 6mr9r',
 '      qk                                 sbbbbbbbbbbe9r',
@@ -72,7 +73,7 @@ var map = [
 '            x   l           r                         r',
 '   wg88gggggggn sbb88bababbbe                         r',
 'dddl          r                 ggggggggggk           r',
-'   l        x r                            d          r',
+'   l     a  x r                            d          r',
 'k  sb88bbbbbbbe                              qggggggggr',
 '    l    7            qgggggggk                       r',
 '    9 4  7                                            r',
@@ -143,11 +144,18 @@ var crate;
 var spikegroup;
 var spike;
 
+var trapgroup;
+var trap;
+
 function create() {
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.add.sprite(0, 0, 'background');
+
+    trapgroup=game.add.group();
+    trapgroup.enableBody=true;
+
 
     breakablegroup=game.add.group();
     breakablegroup.enableBody = true;
@@ -217,6 +225,7 @@ function update() {
     updateShadowTexture();
     //==Physique==
     game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(player, trapgroup, trappegestion, null, this);
     game.physics.arcade.collide(crategroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
     game.physics.arcade.collide(crategroup, crategroup);
@@ -325,9 +334,17 @@ function createMap(){
                     crate=crategroup.create(j*64,i*64,'cratesprite');
                     crate.body.gravity.y = 300;
                 }
-                else if (map[i][j]=='t'){
+                else if (map[i][j]=='a'){
                     spike=spikegroup.create(j*64,i*64,'spikesprite');
                     spike.body.immovable=true;
+                    spike.animations.add('piquant', [0, 1, 2, 3,2,1,0], 10, true);
+                    spike.animations.play('piquant');
+                }
+                else if(map[i][j]=='t'){
+                    trap=trapgroup.create(j*64,i*64,'trappesprite');
+                    trap.body.immovable=true;
+                    trap.animations.add('open', [0, 1, 2], 5, true);
+
                 }
                 else if(map[i][j]=='d'){
 
@@ -504,4 +521,16 @@ function render() {
 
     //smokeEmitter.debug(432, 522);
     //flameEmitter.debug(10, 522);
+}
+
+function trappegestion(player ,trappe){
+
+
+
+    if (trappe.frame==0) {
+    trappe.animations.play('open',30, false);
+    trappe.body.enable=false;
+}
+    
+
 }
