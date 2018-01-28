@@ -14,7 +14,7 @@ function preload() {
     game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
     game.load.image('cratesprite', 'assets/star.png');
-    game.load.image('spikesprite', 'assets/diamond.png');
+    game.load.spritesheet('spikesprite', 'assets/TrappeSprite.png',64,64);
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
