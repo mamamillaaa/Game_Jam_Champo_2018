@@ -273,13 +273,10 @@ function update() {
     game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
     game.physics.arcade.collide(aura, ennemygroup, reactionfoe, null, this);
-<<<<<<< HEAD
     game.physics.arcade.collide(ennemygroup,breakablegroup);
     game.physics.arcade.collide(ennemygroup,crategroup);
     game.physics.arcade.collide(trougroup,crategroup);
-=======
     game.physics.arcade.collide(breakablegroup , ennemygroup);
->>>>>>> 7e3cf828f3b613ff6bc314924a48f424fef3b4a9
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
