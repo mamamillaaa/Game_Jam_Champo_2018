@@ -29,7 +29,9 @@ function preload() {
     game.load.spritesheet('foe', 'assets/foe.png', 32, 32);
     game.load.spritesheet('plateform', 'assets/plateform.png', 64, 64);
     game.load.image('aura', 'assets/aura.png');
-
+    game.load.image('trou', 'assets/troudesouris.png');
+    game.load.image('deathscreen', 'assets/gameover.png');
+    game.load.spritesheet('death', 'assets/hero-sprites-all.png',64,64)
 }
 
 
@@ -155,6 +157,9 @@ var trap;
 
 var aura;
 
+var trougroup;
+var trou;
+
 function create() {
 
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -163,6 +168,10 @@ function create() {
 
     trapgroup=game.add.group();
     trapgroup.enableBody=true;
+
+    trougroup=game.add.group();
+    trougroup.enableBody=true;
+
 
 
     breakablegroup=game.add.group();
@@ -191,6 +200,8 @@ function create() {
     player.animations.add('attack_left', [8, 8], 10, true);
     player.animations.add('attack_right', [7, 7], 10, true);
     player.animations.add('took_dmgs', [9, 10], 5, true);
+    player.events.onOutOfBounds.add(killPlayer, this);
+
 
     aura=game.add.sprite(player.x-200, player.y-200,'aura');
     aura.enableBody=true;
@@ -239,6 +250,7 @@ function update() {
     updateShadowTexture();
     //==Physique==
     game.physics.arcade.collide(player, platforms);
+    game.physics.arcade.collide(player, trougroup);
     game.physics.arcade.collide(player, trapgroup, trappegestion, null, this);
     game.physics.arcade.collide(crategroup, platforms);
     game.physics.arcade.collide(npcgroup, platforms);
@@ -251,6 +263,9 @@ function update() {
     game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
     game.physics.arcade.collide(aura, ennemygroup, reactionfoe, null, this);
+    game.physics.arcade.collide(ennemygroup,breakablegroup);
+    game.physics.arcade.collide(ennemygroup,crategroup);
+    game.physics.arcade.collide(trougroup,crategroup);
 
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
@@ -346,6 +361,10 @@ function createMap(){
                     breakable.body.immovable=true;
                     breakable.frame=dictiowall[8];
                 }
+                if (map[i][j]==9){
+                    trou=trougroup.create(j*64,i*64,'trou');
+                    trou.body.immovable=true;
+                }
                 else if (map[i][j]==7){
                     crate=crategroup.create(j*64,i*64,'cratesprite');
                     crate.body.gravity.y = 300;
@@ -360,9 +379,6 @@ function createMap(){
                     trap=trapgroup.create(j*64,i*64,'trappesprite');
                     trap.body.immovable=true;
                     trap.animations.add('open', [0, 1, 2], 5, true);
-
-                }
-                else if(map[i][j]=='d'){
 
                 }
                 else if (map[i][j] in dictiowall && map[i][j] != 'd'){
@@ -474,6 +490,7 @@ function giveSize(){
     npcSize.body.enable=false;
     SIZE = 0.5;
     player.scale.setTo(SIZE, SIZE);
+    trougroup.setAll('body.enable',false);
 }
 
 //==Création d'ennemis (à partir d'une position)
@@ -493,6 +510,9 @@ function createFoe(x,y){
 //==Perte de vie==
 function loseLife(){
     LIFE--;
+    if (LIFE==0){
+        death();
+    }
     player.y -= 50;
         player.animations.play('took_dmgs');
     console.log(LIFE);
@@ -521,6 +541,37 @@ function platforme(){
     }
 }
 
+function death(){
+
+       //var xdeath=player.x;
+       //var ydeath=player.y;
+       player.kill();
+      // var death=game.add.sprite(xdeath,ydeath,'death');
+       //death.frame=8;
+       game.time.events.add(Phaser.Timer.SECOND, ecranmort, this);
+
+}
+
+function ecranmort(){
+
+
+    var endscreen= game.add.sprite(120,75,'deathscreen');
+    endscreen.scale.setTo(0.18,0.18);
+    endscreen.fixedToCamera=true;
+    restart_label=game.add.text(400,475,'RECOMMENCER', { font: '24px Arial', fill: '#fff' });
+    restart_label.fixedToCamera=true;
+    restart_label.inputEnabled =true;
+    restart_label.events.onInputUp.add(function () {
+
+
+            this.game.state.restart();
+
+
+
+            });
+
+
+}
 function updateShadowTexture(){    
 
         shadowTexture.context.fillStyle = 'rgb(10, 10, 10)';    
@@ -552,7 +603,12 @@ function trappegestion(player ,trappe){
 
 
     if (trappe.frame==0) {
-    trappe.animations.play('open',2, false);
+    trappe.animations.play('open',5, false);
+    game.time.events.add(500, trappeopen, this, trappe);
+    
+}
+
+function trappeopen(){
     trappe.body.enable=false;
 }
     
@@ -567,11 +623,15 @@ function reactionfoe(aura, ennemy){
     ennemy.animations.play('static');
     if(player.x-ennemy.x>0){
         ennemy.animations.play('right',5,true);
-        ennemy.body.velocity.x=SPEED-50;
+        ennemy.body.velocity.x=SPEED-100;
     }
     else
     {
         ennemy.animations.play('left',5,true);
-        ennemy.body.velocity.x=-SPEED+50;
+        ennemy.body.velocity.x=-SPEED+100;
     } 
+}
+
+function killPlayer(){
+    player.kill();
 }
