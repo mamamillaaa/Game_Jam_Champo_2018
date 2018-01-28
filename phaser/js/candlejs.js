@@ -250,8 +250,8 @@ function update() {
     game.physics.arcade.collide(player, breakablegroup, checkifbroken, null, this);
     game.physics.arcade.collide(player, crategroup);
     game.physics.arcade.collide(player, spikegroup, loseLife, null, this);
+    game.physics.arcade.collide(aura, ennemygroup, reactionfoe, null, this);
 
-    game.physics.arcade.overlap(aura, ennemygroup, reactionfoe, null, this);
     game.physics.arcade.overlap(player, npcSuperForce, npcTab[0], null, this);
     game.physics.arcade.overlap(player, npcArmor, npcTab[1], null, this);
     game.physics.arcade.overlap(player, npcFlame, npcTab[2], null, this);
@@ -482,7 +482,7 @@ function createFoe(x,y){
     ennemy.animations.add('left', [0, 1, 2]);
     ennemy.animations.add('right', [4, 5, 6]);
     ennemy.animations.add('static', [3,4,5], 5, true);
-    //ennemy.animations.play('static');
+    ennemy.animations.play('static');
     ennemy.enableBody = true;
     ennemy.body.bounce.y = 0.2;
     ennemy.body.gravity.y = 300;
@@ -564,6 +564,14 @@ function checkdistance(player, ennemy){
 }       
 
 function reactionfoe(aura, ennemy){
-    console.log('JAMBON');
     ennemy.animations.play('static');
+    if(player.x-ennemy.x>0){
+        ennemy.animations.play('right',5,true);
+        ennemy.body.velocity.x=SPEED-50;
+    }
+    else
+    {
+        ennemy.animations.play('left',5,true);
+        ennemy.body.velocity.x=-SPEED+50;
+    } 
 }
