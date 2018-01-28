@@ -13,15 +13,12 @@ function preload() {
     game.load.image('bullet', 'assets/flamme.png');
     game.load.image('background', 'assets/background.png');
     game.load.spritesheet('spritewall', 'assets/spritesheetwall.png', 64, 64);
-<<<<<<< HEAD
     game.load.image('cratesprite', 'assets/caisse.png');
     game.load.spritesheet('spikesprite', 'assets/spike.png',64,64);
     game.load.spritesheet('trappesprite', 'assets/TrappeSprite.png',64,64);
-=======
     game.load.image('cratesprite', 'assets/star.png');
     game.load.image('fragile', 'assets/sol_fragile.png');
     game.load.spritesheet('spikesprite', 'assets/TrappeSprite.png',64,64);
->>>>>>> 214e48fd76e071fbb172ec494efca77dec4fbc11
     game.load.spritesheet('candleguy', 'assets/candleguy.png', 64, 64);
     game.load.spritesheet('life', 'assets/life.png', 58, 53);
     game.load.spritesheet('npcSuperForce', 'assets/npcSuperForce.png', 32, 64);
@@ -422,6 +419,7 @@ function placeNPC(){
 function giveSuperForce(){
     console.log('give super force');
     npcSuperForce.animations.play('giveAbility');
+    npcSuperForce.body.enable=false;
     for (var i=0; i<crategroup.children.length; i++){
         setCrateImmovable(crategroup.children[i]);
     }
@@ -435,6 +433,7 @@ function setCrateImmovable(crate){
 function giveArmor(){
     console.log('give armor');
     npcArmor.animations.play('giveAbility');
+    npcArmor.body.enable=false;
     ARMOR = false;
     SPEED = 200;
 }
@@ -442,12 +441,14 @@ function giveArmor(){
 function giveFlame(){
     console.log('give flame');
     npcFlame.animations.play('giveAbility');
+    npcFlame.body.enable=false;
     FLAME = false;
 }
 
 function giveDoubleJump(){
     console.log('give double jump');
     npcDoubleJump.animations.play('giveAbility');
+    npcDoubleJump.body.enable=false;
     JUMPS = 1;
     DOUBLEJUMPSPEED = 300;
     doublejumpok = false;
@@ -457,6 +458,7 @@ function giveDoubleJump(){
 function giveSize(){
     console.log('give size');
     npcSize.animations.play('giveAbility');
+    npcSize.body.enable=false;
     SIZE = 0.5;
     player.scale.setTo(SIZE, SIZE);
 }
